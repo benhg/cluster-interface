@@ -1,4 +1,4 @@
-## docker-spawn
+## cluster-interface
 
 Docker is a containerization platform for isolating job execution environments. 
 
