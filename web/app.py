@@ -1,4 +1,5 @@
 from flask import Flask
+from time import sleep
 app = Flask(__name__)
 
 
@@ -39,3 +40,10 @@ def help():
 @app.route('/about')
 def about():
     raise NotImplementedError
+
+
+def authenticated(function):
+    def wrapper(*args, **kwargs):
+        sleep(2)
+        return function(*args, **kwargs)
+    return wrapper
