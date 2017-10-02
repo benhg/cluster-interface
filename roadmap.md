@@ -21,11 +21,28 @@ Brief To-do list/ short project roadmap
 - Database to track metadata on jobs
  
 **USER INPUTS**
-I want users to be able to interact with the cluster easily and through a GUI. Prototype I'm thinking about is the following:
+- I want users to be able to interact with the cluster easily and through a GUI. Prototype I'm thinking about is the following:
 - Web based form
 - Takes inputs:
   - JSON specification of file structure expected (Will be a GUI to create this, more to come later)
+  - Handle libraries/modules/apps/dependencies
   - Script and/or executable to run
   - CLI invocation of said script (suggestions will be available)
+  
+**Things To Write**
+- Flask app to handle web backend
+- Web frontend
+- System interaction layer
+  - File Structure
+  - Security
+  - Execution
+- Data Staging Layer
+  - Parsing descriptions of filesystems
+  - and generating them
+  - Staging input data
+    - From head node
+    - From Internet
+    - Over Globus (?)
+  - Containerization layer
   
  
