@@ -30,7 +30,7 @@ This is an independent study by Benjamin Glick (@benhg, glick@lclark.edu), advis
 - Database to track metadata on jobs
  
 **USER INPUTS**
-I want users to be able to interact with the cluster easily and through a GUI. Prototype I'm thinking about is the following:
+- I want users to be able to interact with the cluster easily and through a GUI. Prototype I'm thinking about is the following:
 - Web based form
 - Takes inputs:
   - JSON specification of file structure expected (Will be a GUI to create this, more to come later)
