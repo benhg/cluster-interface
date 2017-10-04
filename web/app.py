@@ -1,5 +1,6 @@
-from flask import Flask
+from flask import Flask, render_template, request
 from time import sleep
+import json
 app = Flask(__name__)
 
 
@@ -8,7 +9,7 @@ app = Flask(__name__)
 @app.route('/index.html')
 @app.route('/index.php')
 def hello_world():
-    return 'Hello, World!'
+    return render_template("home.html")
 
 
 @app.route('/jobs')
@@ -42,7 +43,20 @@ def about():
     raise NotImplementedError
 
 
+@app.route('/newjob')
+def submit_page():
+    return render_template('submit.html')
+
+
+@app.route('/script', methods=["GET", "POST"])
+def script():
+    return json.dumps(request.form)
+
+
 def authenticated(function):
+    """I will have a decorator that determines whether a user is authenticated
+    to the application. That way, I can just put @authenticated over the
+    functions returning  authendicated pages"""
     def wrapper(*args, **kwargs):
         sleep(2)
         return function(*args, **kwargs)
