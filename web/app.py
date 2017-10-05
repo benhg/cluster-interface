@@ -48,10 +48,14 @@ def submit_page():
     return render_template('submit.html')
 
 
-@app.route('/script', methods=["GET", "POST"])
+@app.route('/script', methods=["POST"])
 def script():
     print(request.form)
-    return json.dumps(request.form)
+    print(request.files)
+    with open("log.txt", "a") as log:
+        log.write(request.files)
+        log.write(request.form)
+    return json.dumps(request.files)
 
 
 def authenticated(function):

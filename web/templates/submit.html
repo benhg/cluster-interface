@@ -2,6 +2,7 @@
 <html>
     <head>
 	<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/3.51/jquery.form.min.js"></script>
     </head>
     <body>
 	<form id="formoid" action="" title="" method="post">
@@ -23,7 +24,7 @@
             </div>
             
             <div>
-		<input type="button" id="submitButton"  name="submitButton" value="Submit Job">
+		<input type="submit" id="submitButton"  name="submitButton" value="Submit Job">
             </div>
 	</form>
 	<script type='text/javascript'>
@@ -45,31 +46,11 @@
 	     //		 alert('success');
 	     //	     });
 	     file = $("#script")[0].files[0].valueOf();
-	     alert(file)
-	     upload = new Upload(file);
-
-	     // maby check size or type here with upload.getSize() and upload.getType()
-
-	     // execute upload
-	     upload.doUpload();
+	     makeAJAX(file);
 	 });
-	 var Upload = function (file) {
-	     this.file = file;
-	 };
-
-	 Upload.prototype.getType = function() {
-	     return this.file.type;
-	 };
-	 Upload.prototype.getSize = function() {
-	     return this.file.size;
-	 };
-	 Upload.prototype.getName = function() {
-	     return this.file.name;
-	 };
-	 Upload.prototype.doUpload = function () {
-	     var that = this;
+	 function makeAJAX(file){
 	     var formData ={};
-	     formData['file']= $("#script")[0].files[0];
+	     formData['file']= file;
 	     console.log(formData);
 	     //var reader = new FileReader();
 	     //text=reader.readAsText($('#script')[0].files[0]).result
@@ -95,25 +76,12 @@
 		     // handle 
 		 },
 		 async: true,
-		 data: formData,
+		 data:  formData,
 		 cache: false,
 		 contentType: false,
 		 processData: false,
 		 timeout: 60000
 	     });
-	 };
-
-	 Upload.prototype.progressHandling = function (event) {
-	     var percent = 0;
-	     var position = event.loaded || event.position;
-	     var total = event.total;
-	     var progress_bar_id = "#progress-wrp";
-	     if (event.lengthComputable) {
-		 percent = Math.ceil(position / total * 100);
-	     }
-	     // update progressbars classes so it fits your code
-	     $(progress_bar_id + " .progress-bar").css("width", +percent + "%");
-	     $(progress_bar_id + " .status").text(percent + "%");
 	 };
 	</script>
 
