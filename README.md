@@ -10,6 +10,9 @@ This is an independent study by Benjamin Glick (@benhg, glick@lclark.edu), advis
 ## Brief To-do list/ short project roadmap
 
 
+Brief To-do list/ short project roadmap
+
+
 **FRONT END/USER INTERACTION**
 - Python API/interface
 - CL tools
@@ -34,5 +37,24 @@ This is an independent study by Benjamin Glick (@benhg, glick@lclark.edu), advis
 - Web based form
 - Takes inputs:
   - JSON specification of file structure expected (Will be a GUI to create this, more to come later)
+  - Handle libraries/modules/apps/dependencies
   - Script and/or executable to run
   - CLI invocation of said script (suggestions will be available)
+  
+**Things To Write**
+- Flask app to handle web backend
+- Web frontend
+- System interaction layer
+  - File Structure
+  - Security
+    -Oauth (maybe globus auth is a good place to start?)
+  - Execution
+- Data Staging Layer
+  - Parsing descriptions of filesystems
+  - and generating them
+  - Staging input data
+    - From head node
+    - From Internet
+    - Over Globus (?)
+  - Containerization layer
+  - Execution Layer
