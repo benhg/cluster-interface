@@ -1,5 +1,6 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect
 from time import sleep
+import os
 import json
 app = Flask(__name__)
 
@@ -49,13 +50,13 @@ def submit_page():
 
 
 @app.route('/script', methods=["POST"])
-def script():
-    print(request.form)
+def script_handler():
+    print(request.args)
     print(request.files)
-    with open("log.txt", "a") as log:
-        log.write(request.files)
-        log.write(request.form)
-    return json.dumps(request.files)
+    jobname = dict(request.form).get('job_name', "job")
+    script = dict(request.files)['0'][0]
+    print(script, jobname)
+    return redirect('/newjob')
 
 
 def authenticated(function):

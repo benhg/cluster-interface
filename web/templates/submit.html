@@ -1,89 +1,30 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
     <head>
-	<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/3.51/jquery.form.min.js"></script>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+	<script src="static/js/script.js"></script>
     </head>
     <body>
-	<form id="formoid" action="" title="" method="post">
-            <div>
-		<label class="title">Job Name</label>
-		<input type="text" id="name" name="name" >
-            </div>
-            <div>
-		<label class="title">Command Line Invocation</label>
-		<input type="text" id="cli" name="cli" >
-            </div>
-	    <div>
-		<label class="title">Script</label>
-		<input type="file" id="script" name="script" >
-            </div>
-	    <div>
-		<label class="title">Filesystem</label>
-		<input type="file" id="filesys" name="filesys" >
-            </div>
-            
-            <div>
-		<input type="submit" id="submitButton"  name="submitButton" value="Submit Job">
-            </div>
+
+	<h1>jQuery Uploads</h1>
+
+	<form action="script" enctype="multipart/form-data" method="post">
+	    <ul>
+		<li>
+		    <label for="name">Name:</label>
+		    <input type="text" name="name" id="name" multiple>
+		</li>
+
+		<li>
+		    <label for="file_upload">File:</label>
+		    <input type="file" name="file_upload" id="file_upload" multiple>
+		</li>
+
+		<li><input class="button green" type="submit" name="submit" value="Submit Content"></li>
+	    </ul>
 	</form>
-	<script type='text/javascript'>
-	 /* attach a submit handler to the form */
-	 $("#submitButton").click(function(event) {
-
-	     /* stop form from submitting normally */
-	     event.preventDefault();
-
-	     /* get the action attribute from the <form action=""> element */
-	     var $form = $( this ),
-		 // url = $form.attr( 'action' );
-
-	     /* Send the data using post with element id name and name2*/
-	     // var posting = $.post( url, { name: $('#name').val(), name2: $('#name2').val() } );
-
-	     /* Alerts the results */
-	     // posting.done(function( data ) {
-	     //		 alert('success');
-	     //	     });
-	     file = $("#script")[0].files[0].valueOf();
-	     makeAJAX(file);
-	 });
-	 function makeAJAX(file){
-	     var formData ={};
-	     formData['file']= file;
-	     console.log(formData);
-	     //var reader = new FileReader();
-	     //text=reader.readAsText($('#script')[0].files[0]).result
-	     
-	     // add assoc key values, this will be posts values
-	     formData["upload_file"] = true;
-	     formData = JSON.stringify(formData);
-	     alert(formData);
-
-	     $.ajax({
-		 type: "POST",
-		 url: "/script",
-		 xhr: function () {
-		     var myXhr = $.ajaxSettings.xhr();
-		     if (myXhr.upload) {
-			 myXhr.upload.addEventListener('progress', that.progressHandling, false);
-		     }
-		     return myXhr;
-		 },
-		 success: function (data) {
-		 },
-		 error: function (error) {
-		     // handle 
-		 },
-		 async: true,
-		 data:  formData,
-		 cache: false,
-		 contentType: false,
-		 processData: false,
-		 timeout: 60000
-	     });
-	 };
-	</script>
 
     </body>
-</html> 
+</html>
