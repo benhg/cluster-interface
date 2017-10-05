@@ -50,6 +50,7 @@ def submit_page():
 
 @app.route('/script', methods=["GET", "POST"])
 def script():
+    print(request.form)
     return json.dumps(request.form)
 
 

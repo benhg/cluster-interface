@@ -35,16 +35,17 @@
 
 	     /* get the action attribute from the <form action=""> element */
 	     var $form = $( this ),
-		// url = $form.attr( 'action' );
+		 // url = $form.attr( 'action' );
 
 	     /* Send the data using post with element id name and name2*/
-	    // var posting = $.post( url, { name: $('#name').val(), name2: $('#name2').val() } );
+	     // var posting = $.post( url, { name: $('#name').val(), name2: $('#name2').val() } );
 
 	     /* Alerts the results */
-	    // posting.done(function( data ) {
-//		 alert('success');
-//	     });
-	     file = $("#script")[0].files[0];
+	     // posting.done(function( data ) {
+	     //		 alert('success');
+	     //	     });
+	     file = $("#script")[0].files[0].valueOf();
+	     alert(file)
 	     upload = new Upload(file);
 
 	     // maby check size or type here with upload.getSize() and upload.getType()
@@ -67,11 +68,16 @@
 	 };
 	 Upload.prototype.doUpload = function () {
 	     var that = this;
-	     var formData = new FormData();
-
+	     var formData ={};
+	     formData['file']= $("#script")[0].files[0];
+	     console.log(formData);
+	     //var reader = new FileReader();
+	     //text=reader.readAsText($('#script')[0].files[0]).result
+	     
 	     // add assoc key values, this will be posts values
-	     formData.append("file", this.file, this.getName());
-	     formData.append("upload_file", true);
+	     formData["upload_file"] = true;
+	     formData = JSON.stringify(formData);
+	     alert(formData);
 
 	     $.ajax({
 		 type: "POST",
@@ -84,10 +90,9 @@
 		     return myXhr;
 		 },
 		 success: function (data) {
-		     // your callback here
 		 },
 		 error: function (error) {
-		     // handle error
+		     // handle 
 		 },
 		 async: true,
 		 data: formData,
