@@ -35,6 +35,7 @@ Brief To-do list/ short project roadmap
 - System interaction layer
   - File Structure
   - Security
+    -Oauth (maybe globus auth is a good place to start?)
   - Execution
 - Data Staging Layer
   - Parsing descriptions of filesystems
