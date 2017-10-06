@@ -61,18 +61,17 @@ $(function()
     function submitForm(event, data)
 	{
 		// Create a jQuery object from the form
-		$form = $(event.target);
+		$form = $("#form1");
 		
 		// Serialize the form data
  		var formData = $form.serialize();
-		
+		formData = formData+ '&job_name='+$("#name").val()
+                alert(formData)
 		// You should sterilise the file names
 		$.each(data.files, function(key, value)
 		{
 			formData = formData + '&filenames[]=' + value;
 		});
-	        formData = formData+ '&job_name='+$("#name").val()
-                alert(formData)
 		$.ajax({
 			url: 'script',
             type: 'POST',
