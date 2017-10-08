@@ -1,5 +1,7 @@
 from flask import Flask, render_template, request, redirect
 from time import sleep
+from werkzeug import secure_filename
+
 import os
 import json
 app = Flask(__name__)
@@ -49,13 +51,11 @@ def submit_page():
     return render_template('submit.html')
 
 
-@app.route('/script', methods=["POST"])
+@app.route('/script', methods=["POST", "GET"])
 def script_handler():
-    print(request.args)
-    print(request.files)
     jobname = dict(request.form).get('job_name', "job")
-    script = dict(request.files)
-    print(script, jobname)
+    script = dict(request.files).get("executable")
+    print(request.form, "\n", script)
     return redirect('/newjob')
 
 

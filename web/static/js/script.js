@@ -2,12 +2,13 @@ $(document).ready(function(){
 
 $('#submit-button').click(function(){
 
-    var formData = new FormData($('#data')[0]);
+    var fileData = new FormData($('#data')[0]);
+    console.log(fileData);
 
     $.ajax({
         url:'/script',
         type: 'POST',
-        data: formData,
+        data: fileData,
         async: false,
         success: function (data) {
             alert(data)
@@ -16,7 +17,6 @@ $('#submit-button').click(function(){
         contentType: false,
         processData: false
     });
-
     return false;
 });
 });
