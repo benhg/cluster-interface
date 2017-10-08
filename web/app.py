@@ -73,7 +73,7 @@ def sanitize_for_filename(filename):
     return safe.replace(" ", "_")
 
 
-@app.route('/script', methods=["POST", "GET"])
+@app.route('/script', methods=["POST"])
 def script_handler():
     jobname = sanitize_for_filename(
         dict(request.form).get('job_name', ["job"])[0])
@@ -83,7 +83,7 @@ def script_handler():
     script = dict(request.files).get("executable")[0]
     job_uuid = uuid.uuid1()
     jobname = make_base_dir(filename, jobname, script)
-    fs.save(app.config["upload_base_dir"] + jobname + ".json")
+    fs.save(app.config["upload_base_dir"] + jobname + "/filestructure.json")
     parse_filesystem(jobname)
     return redirect('/newjob')
 
@@ -100,7 +100,8 @@ def make_base_dir(filename, jobname, script):
 
 
 def parse_filesystem(jobname):
-    fs_desc = open((app.config["upload_base_dir"] + jobname + ".json", "r"))
+    dirpath = app.config["upload_base_dir"] + jobname + "/"
+    fs_desc = json.load(open((dirpath + "filestructure.json", "r")))
 
 
 def authenticated(function):
