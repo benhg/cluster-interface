@@ -1,105 +1,22 @@
-$(function()
-{
-	// Variable to store your files
-	var files;
+$(document).ready(function(){
 
-	// Add events
-	$('input[type=file]').on('change', prepareUpload);
-	$('form').on('submit', uploadFiles);
+$('#submit-button').click(function(){
 
-	// Grab the files and set them to our variable
-	function prepareUpload(event)
-	{
-		files = event.target.files;
-	}
+    var formData = new FormData($('#data')[0]);
 
-	// Catch the form submit and upload the files
-	function uploadFiles(event)
-	{
-		event.stopPropagation(); // Stop stuff happening
-        event.preventDefault(); // Totally stop stuff happening
+    $.ajax({
+        url:'/script',
+        type: 'POST',
+        data: formData,
+        async: false,
+        success: function (data) {
+            alert(data)
+        },
+        cache: false,
+        contentType: false,
+        processData: false
+    });
 
-        // START A LOADING SPINNER HERE
-
-        // Create a formdata object and add the files
-		var data = new FormData();
-		$.each(files, function(key, value)
-		{
-		    data.append(key, value);
-		});
-        $.ajax({
-            url: 'script',
-            type: 'POST',
-            data: data,
-             cache: false,
-            dataType: 'json',
-            processData: false, // Don't process the files
-            contentType: false, // Set content type to false as jQuery will tell the server its a query string request
-            success: function(data, textStatus, jqXHR)
-            {
-            	if(typeof data.error === 'undefined')
-            	{
-            		// Success so call function to process the form
-            		submitForm(event, data);
-            	} 
-            	else
-            	{
-            	    // Handle errors here
-            		console.log('ERRORS: ' + data.error);
-            	}
-            },
-            error: function(jqXHR, textStatus, errorThrown)
-            {
-            	// Handle errors here
-		submitForm(event, data);
-            	console.log('ERRORS: ' + textStatus);
-            	// STOP LOADING SPINNER
-            }
-        });
-    }
-
-    function submitForm(event, data)
-	{
-		// Create a jQuery object from the form
-		$form = $("#form1");
-		
-		// Serialize the form data
- 		var formData = $form.serialize();
-		formData = formData+ '&job_name='+$("#name").val()
-                alert(formData)
-		// You should sterilise the file names
-		$.each(data.files, function(key, value)
-		{
-			formData = formData + '&filenames[]=' + value;
-		});
-		$.ajax({
-			url: 'script',
-            type: 'POST',
-            data: formData,
-            cache: false,
-            dataType: 'json',
-            success: function(data, textStatus, jqXHR)
-            {
-            	if(typeof data.error === 'undefined')
-            	{
-            		// Success so call function to process the form
-            		console.log('SUCCESS: ' + data.success);
-            	}
-            	else
-            	{
-            		// Handle errors here
-            		console.log('ERRORS: ' + data.error);
-            	}
-            },
-            error: function(jqXHR, textStatus, errorThrown)
-            {
-            	// Handle errors here
-            	console.log('ERRORS: ' + textStatus);
-            },
-            complete: function()
-            {
-            	// STOP LOADING SPINNER
-            }
-		});
-	}
+    return false;
+});
 });

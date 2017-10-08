@@ -10,19 +10,14 @@
 
 	<h1>jQuery Uploads</h1>
 
-	<form id="form1" action="scrip" enctype="multipart/form-data" method="post">
+	<form id="data" enctype="multipart/form-data" method="post">
 	    <ul>
-		<li>
-		    <label for="name">Name:</label>
-		    <input type="text" name="name" id="name" multiple>
-		</li>
+		<li> <input type="text" name="first" value="Bob" /></li>
+		    <li> <input type="text" name="middle" value="James" /></li>
+		    <li> <input type="text" name="last" value="Smith" /></li>
+		    <li> <input name="image" type="file" /></li>
 
-		<li>
-		    <label for="file_upload">File:</label>
-		    <input type="file" name="file_upload" id="file_upload" multiple>
-		</li>
-
-		<li><input class="button green" type="submit" name="submit" value="Submit Content"></li>
+		<li><input id="submit-button" class="button green" type="button" name="submit" value="Submit Content"></li>
 	    </ul>
 	</form>
 

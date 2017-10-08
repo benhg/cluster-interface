@@ -54,7 +54,7 @@ def script_handler():
     print(request.args)
     print(request.files)
     jobname = dict(request.form).get('job_name', "job")
-    script = dict(request.files)['0'][0]
+    script = dict(request.files)
     print(script, jobname)
     return redirect('/newjob')
 
