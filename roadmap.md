@@ -36,6 +36,11 @@ Brief To-do list/ short project roadmap
   - File Structure
   - Security
     -Oauth (maybe globus auth is a good place to start?)
+    - Possibly a place to test stewarship model?
+      - Requiring a manual override for some types of jobs
+      - Small sandboxed jobs can be run without stewardship
+      - Larger/size unlimited jobs must be manually approved by an admin
+      - This keeps people without permission from using large amounts of compute time
   - Execution
 - Data Staging Layer
   - Parsing descriptions of filesystems
