@@ -5,6 +5,7 @@ import os
 import glob
 import uuid
 import json
+
 app = Flask(__name__)
 
 app.config["db_cursor"] = sqlite3.connect("interface.db").cursor()
@@ -67,7 +68,7 @@ def sanitize(string):
 
 
 def sanitize_for_filename(filename):
-    keepcharacters = (' ', '.', '_')
+    keepcharacters = [' ', '.', '_']
     safe = "".join(c for c in filename if c.isalnum()
                    or c in keepcharacters).rstrip()
     return safe.replace(" ", "_")
@@ -79,29 +80,42 @@ def script_handler():
         dict(request.form).get('job_name', ["job"])[0])
     filename = sanitize_for_filename(
         dict(request.form).get('filename', ['script'])[0])
-    fs = dict(request.files).get("filestructure")[0]
+    fs = dict(request.files).get("filestructure", None)[0]
     script = dict(request.files).get("executable")[0]
     job_uuid = uuid.uuid1()
-    jobname = make_base_dir(filename, jobname, script)
-    fs.save(app.config["upload_base_dir"] + jobname + "/filestructure.json")
-    parse_filesystem(jobname)
+    jobname = make_job_base_dir(filename, jobname, script)
+    if fs:
+        fs.save(app.config["upload_base_dir"] +
+                jobname + "/filestructure.json")
+        parse_filesystem(jobname)
     return redirect('/newjob')
 
 
-def make_base_dir(filename, jobname, script):
+def make_job_base_dir(filename, jobname, script):
     if not os.path.exists(app.config['upload_base_dir'] + jobname):
         os.makedirs(app.config['upload_base_dir'] +
                     sanitize_for_filename(jobname))
     else:
-        jobname = jobname + \
-            len(glob.glob(app.config['upload_base_dir'] + jobname))
+        full_job_name_list = (
+            app.config['upload_base_dir'] + jobname).split("_")[:-1]
+        full_job_name = '_'.join(full_job_name_list) + "*"
+        numruns = str(len(glob.glob(full_job_name)) + 1)
+        print(numruns)
+        jobname = jobname + "_" + numruns
+        os.makedirs(app.config['upload_base_dir'] +
+                    sanitize_for_filename(jobname))
     script.save(app.config['upload_base_dir'] + jobname + "/" + filename)
     return jobname
 
 
 def parse_filesystem(jobname):
     dirpath = app.config["upload_base_dir"] + jobname + "/"
-    fs_desc = json.load(open((dirpath + "filestructure.json", "r")))
+    try:
+        fs_desc = json.load(open((dirpath + "filestructure.json", "r")))
+    except Exception as e:
+        print("No FS_desc provided")
+    for object in fs_desc():
+        pass
 
 
 def authenticated(function):
