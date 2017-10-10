@@ -34,7 +34,22 @@ def status_page():
 
 @app.route('/login')
 def login():
-    raise NotImplementedError
+    return render_template("login.html")
+
+
+@app.route('/login_test', methods=["POST"])
+def login_test():
+    uname = request.form['uname']
+    passwd = request.form['passwd']
+    print(uname, passwd)
+    record = app.config['db_cursor'].execute(
+        "select * from users where username=?", (uname,)).fetchone()
+    if record:
+        print(record)
+        if passwd == record[4]:
+            return "pass"
+            # session stuff
+    return "fail"
 
 
 @app.route('/logout')
@@ -63,10 +78,6 @@ def submit_page():
     return render_template('submit.html')
 
 
-def sanitize(string):
-    string = string.decode("utf8", "ignore")
-
-
 def sanitize_for_filename(filename):
     keepcharacters = [' ', '.', '_']
     safe = "".join(c for c in filename if c.isalnum()
@@ -80,7 +91,7 @@ def script_handler():
         dict(request.form).get('job_name', ["job"])[0])
     filename = sanitize_for_filename(
         dict(request.form).get('filename', ['script'])[0])
-    fs = dict(request.files).get("filestructure", None)[0]
+    fs = dict(request.files).get("filestructure", [None])[0]
     script = dict(request.files).get("executable")[0]
     job_uuid = uuid.uuid1()
     jobname = make_job_base_dir(filename, jobname, script)
