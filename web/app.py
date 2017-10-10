@@ -1,6 +1,7 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, session, url_for, Response
 import sqlite3
 from werkzeug import secure_filename
+from functools import wraps
 import os
 import glob
 import uuid
@@ -10,6 +11,17 @@ app = Flask(__name__)
 
 app.config["db_cursor"] = sqlite3.connect("interface.db").cursor()
 app.config['upload_base_dir'] = "/Users/ben/Google Drive/class/y2/ind_study/workspace/uploads/"
+app.secret_key = b'\x9b4\xf8%\x1b\x90\x0e[?\xbd\x14\x7fS\x1c\xe7Y\xd8\x1c\xf9\xda\xb0K=\xba'
+# I will obviously change this secret key before we go live
+
+
+def requires_auth(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if not check_auth(session.get('username', None)):
+            return authenticate()
+        return f(*args, **kwargs)
+    return decorated
 
 
 @app.route('/')
@@ -47,14 +59,17 @@ def login_test():
     if record:
         print(record)
         if passwd == record[4]:
+            session['username'] = uname
+            session["display_name"] = record[3]
+            session['uuid'] = record[1]
             return "pass"
-            # session stuff
     return "fail"
 
 
 @app.route('/logout')
 def logout():
-    raise NotImplementedError
+    session.clear()
+    return redirect(url_for("hello_world"))
 
 
 @app.route('/authcallback')
@@ -74,7 +89,9 @@ def about():
 
 
 @app.route('/newjob')
+@requires_auth
 def submit_page():
+    print(session)
     return render_template('submit.html')
 
 
@@ -124,16 +141,27 @@ def parse_filesystem(jobname):
     try:
         fs_desc = json.load(open((dirpath + "filestructure.json", "r")))
     except Exception as e:
-        print("No FS_desc provided")
+        app.logger.info("No FS_desc provided for job {}".format(jobname))
     for object in fs_desc():
         pass
 
 
-def authenticated(function):
-    """I will have a decorator that determines whether a user is authenticated
-    to the application. That way, I can just put @authenticated over the
-    functions returning  authendicated pages"""
-    def wrapper(*args, **kwargs):
-        sleep(2)
-        return function(*args, **kwargs)
-    return wrapper
+def check_auth(username):
+    """This function is called to check if a username /
+    password combination is valid.
+    """
+    print(username)
+    record = app.config['db_cursor'].execute(
+        "select * from users where username=?", (username,)).fetchone()
+    print(record)
+    if not record:
+        return False
+    return username == record[0]
+
+
+def authenticate():
+    """Sends a 401 response that enables basic auth"""
+    return Response(
+        'Could not verify your access level for that URL.\n'
+        'You have to login with proper credentials', 403,
+        {'WWW-Authenticate': 'Basic realm="Login Required"'})
