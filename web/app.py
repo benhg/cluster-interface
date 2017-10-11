@@ -7,6 +7,7 @@ import glob
 import uuid
 import json
 import sqlite3
+import hashlib
 
 app = Flask(__name__)
 
@@ -54,7 +55,7 @@ def login():
 @app.route('/login_test', methods=["POST"])
 def login_test():
     uname = request.form['uname']
-    passwd = request.form['passwd']
+    passwd = hashlib.sha224(request.form['passwd'].encode('utf-8')).hexdigest()
     print(uname, passwd)
     record = app.config['db_cursor'].execute(
         "select * from users where username=?", (uname,)).fetchone()
@@ -89,7 +90,21 @@ def about():
     raise NotImplementedError
 
 
+@app.route('/myjobs')
+@requires_auth
+def all_jobs2():
+    uname = session.get('display_name')
+    alljobs = app.config["db_cursor"].execute(
+        """select job_name, display_name, cli_invoc, time_created, status, size,
+        time_finished, desc
+        from jobs
+        join users on jobs.creator_uuid=users.user_uuid
+        where users.user_uuid=?""", (session.get('uuid'),)).fetchall()
+    return render_template("all_my_jobs.html", all_jobs=alljobs, u_name=uname)
+
+
 @app.route('/jobs')
+@requires_auth
 def all_jobs():
     alljobs = app.config["db_cursor"].execute(
         """select job_name, display_name, cli_invoc, time_created, status, size,
@@ -179,7 +194,6 @@ def check_auth(username):
     print(username)
     record = app.config['db_cursor'].execute(
         "select * from users where username=?", (username,)).fetchone()
-    print(record)
     if not record:
         return False
     return username == record[0]
