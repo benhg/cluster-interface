@@ -13,6 +13,7 @@ app = Flask(__name__)
 
 app.config['db_conn'] = sqlite3.connect("interface.db")
 app.config["db_cursor"] = app.config['db_conn'].cursor()
+app.config["admin_email"] = "glick@lclark.edu"
 app.config['upload_base_dir'] = "/Users/ben/Google Drive/class/y2/ind_study/workspace/uploads/"
 app.secret_key = b'\x9b4\xf8%\x1b\x90\x0e[?\xbd\x14\x7fS\x1c\xe7Y\xd8\x1c\xf9\xda\xb0K=\xba'
 # I will obviously change this secret key before we go live
@@ -139,6 +140,14 @@ def db_save_job(jn, fn, cli, u_uuid, desc, b_dir):
     app.config['db_conn'].commit()
 
 
+def increment_job_counter(user_id):
+    current = int(app.config['db_cursor'].execute(
+        'select jobs_executed from users where user_uuid=?', (user_id,)).fetchone()[0]) + 1
+    app.config['db_cursor'].execute(
+        "update users set jobs_executed=? where user_uuid=?", (current, user_id))
+    app.config['db_conn'].commit()
+
+
 @app.route('/script', methods=["POST"])
 @requires_auth
 def script_handler():
@@ -147,16 +156,18 @@ def script_handler():
     fn = sanitize_for_filename(
         dict(request.form).get('filename', ['script'])[0])
     fs = dict(request.files).get("filestructure", [None])[0]
+    print(fs)
     script = dict(request.files).get("executable", [None])[0]
     desc = request.form.get("desc", [None])
     cli = request.form.get("cli", [None])
     jn, b_dir = make_job_base_dir(fn, jn, script)
     db_save_job(jn, fn, cli,
                 session["uuid"], desc, b_dir)
+    increment_job_counter(session.get('uuid'))
     if fs:
         fs.save(app.config["upload_base_dir"] +
-                jobname + "/filestructure.json")
-        parse_filesystem(jobname)
+                jn + "/filestructure.json")
+        parse_filesystem(jn)
     return redirect('/newjob')
 
 
@@ -178,12 +189,13 @@ def make_job_base_dir(filename, jobname, script):
 
 
 def parse_filesystem(jobname):
+    fs_desc = []
     dirpath = app.config["upload_base_dir"] + jobname + "/"
     try:
         fs_desc = json.load(open((dirpath + "filestructure.json", "r")))
     except Exception as e:
         app.logger.info("No FS_desc provided for job {}".format(jobname))
-    for object in fs_desc():
+    for object in fs_desc:
         pass
 
 
@@ -202,3 +214,31 @@ def check_auth(username):
 def authenticate():
     """Sends a 401 response that enables basic auth"""
     return render_template("autherr.html")
+
+
+@app.route('/register')
+def register():
+    raise NotImplementedError
+
+
+@app.route('/changepass')
+def change_password():
+    raise NotImplementedError
+
+
+@app.route('/docs')
+def docs():
+    raise NotImplementedError
+
+
+@app.route('/contact', methods=['GET', 'POST'])
+def contact():
+    if request.methods == "GET":
+        # We render the modal
+        pass
+    elif request.methods == "POST":
+        # we handle the contact form and send an email
+        pass
+    else:
+        # 405 method not allowed
+        return "405 Method Not Allowed"
