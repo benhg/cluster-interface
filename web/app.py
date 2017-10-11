@@ -1,15 +1,17 @@
-from flask import Flask, render_template, request, redirect, session, url_for, Response
-import sqlite3
+from flask import Flask, render_template, request, redirect, session, url_for
+import time
 from werkzeug import secure_filename
 from functools import wraps
 import os
 import glob
 import uuid
 import json
+import sqlite3
 
 app = Flask(__name__)
 
-app.config["db_cursor"] = sqlite3.connect("interface.db").cursor()
+app.config['db_conn'] = sqlite3.connect("interface.db")
+app.config["db_cursor"] = app.config['db_conn'].cursor()
 app.config['upload_base_dir'] = "/Users/ben/Google Drive/class/y2/ind_study/workspace/uploads/"
 app.secret_key = b'\x9b4\xf8%\x1b\x90\x0e[?\xbd\x14\x7fS\x1c\xe7Y\xd8\x1c\xf9\xda\xb0K=\xba'
 # I will obviously change this secret key before we go live
@@ -39,9 +41,9 @@ def fs_gen():
     raise NotImplementedError
 
 
-@app.route('/jobs')
-def status_page():
-    raise NotImplementedError
+@app.route('/job<jid>')
+def status_page(jid):
+    return "Status Page"
 
 
 @app.route('/login')
@@ -87,6 +89,16 @@ def about():
     raise NotImplementedError
 
 
+@app.route('/jobs')
+def all_jobs():
+    alljobs = app.config["db_cursor"].execute(
+        """select job_name, display_name, cli_invoc, time_created, status, size,
+        time_finished, desc
+        from jobs
+        join users on jobs.creator_uuid=users.user_uuid""").fetchall()
+    return render_template("all_jobs.html", all_jobs=alljobs)
+
+
 @app.route('/newjob')
 @requires_auth
 def submit_page():
@@ -101,17 +113,31 @@ def sanitize_for_filename(filename):
     return safe.replace(" ", "_")
 
 
+def db_save_job(jn, fn, cli, u_uuid, desc, b_dir):
+    job_uuid = str(uuid.uuid1())
+    now = str(time.ctime())
+    app.config['db_cursor'].execute("""insert into jobs (job_name, cli_invoc, 
+    time_created, j_id, creator_uuid, status, base_dir,
+    exe_filename, size, desc) VALUES (?,?,?,?,?,?,?,?,?,?) """, (
+        jn, cli, now, job_uuid, u_uuid, "Pending", b_dir, fn, 1, desc)
+    )
+    app.config['db_conn'].commit()
+
+
 @app.route('/script', methods=["POST"])
 @requires_auth
 def script_handler():
-    jobname = sanitize_for_filename(
+    jn = sanitize_for_filename(
         dict(request.form).get('job_name', ["job"])[0])
-    filename = sanitize_for_filename(
+    fn = sanitize_for_filename(
         dict(request.form).get('filename', ['script'])[0])
     fs = dict(request.files).get("filestructure", [None])[0]
-    script = dict(request.files).get("executable")[0]
-    job_uuid = uuid.uuid1()
-    jobname = make_job_base_dir(filename, jobname, script)
+    script = dict(request.files).get("executable", [None])[0]
+    desc = request.form.get("desc", [None])
+    cli = request.form.get("cli", [None])
+    jn, b_dir = make_job_base_dir(fn, jn, script)
+    db_save_job(jn, fn, cli,
+                session["uuid"], desc, b_dir)
     if fs:
         fs.save(app.config["upload_base_dir"] +
                 jobname + "/filestructure.json")
@@ -133,7 +159,7 @@ def make_job_base_dir(filename, jobname, script):
         os.makedirs(app.config['upload_base_dir'] +
                     sanitize_for_filename(jobname))
     script.save(app.config['upload_base_dir'] + jobname + "/" + filename)
-    return jobname
+    return jobname, app.config['upload_base_dir'] + sanitize_for_filename(jobname)
 
 
 def parse_filesystem(jobname):
