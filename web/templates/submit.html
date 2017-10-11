@@ -1,13 +1,7 @@
-<!doctype html>
-<html lang="en">
-    <head>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-	<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
-	<script src="static/js/script.js"></script>
-    </head>
+{% extends "base.html" %}
+{% block body %}
     <body>
-
+	<script src="static/js/script.js"></script>
 	<h1>Cluster Interface Job Submission Page</h1>
 
 	<form id="data" enctype="multipart/form-data" method="post">
@@ -21,6 +15,4 @@
 		<li><input id="submit-button" class="button green" type="button" name="submit" value="Submit Content"></li>
 	    </ul>
 	</form>
-
-    </body>
-</html>
+{% endblock %}

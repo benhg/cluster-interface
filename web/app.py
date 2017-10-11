@@ -57,7 +57,6 @@ def login_test():
     record = app.config['db_cursor'].execute(
         "select * from users where username=?", (uname,)).fetchone()
     if record:
-        print(record)
         if passwd == record[4]:
             session['username'] = uname
             session["display_name"] = record[3]
@@ -103,6 +102,7 @@ def sanitize_for_filename(filename):
 
 
 @app.route('/script', methods=["POST"])
+@requires_auth
 def script_handler():
     jobname = sanitize_for_filename(
         dict(request.form).get('job_name', ["job"])[0])
@@ -161,7 +161,4 @@ def check_auth(username):
 
 def authenticate():
     """Sends a 401 response that enables basic auth"""
-    return Response(
-        'Could not verify your access level for that URL.\n'
-        'You have to login with proper credentials', 403,
-        {'WWW-Authenticate': 'Basic realm="Login Required"'})
+    return render_template("autherr.html")
