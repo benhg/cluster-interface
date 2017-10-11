@@ -41,6 +41,7 @@ Brief To-do list/ short project roadmap
       - Small sandboxed jobs can be run without stewardship
       - Larger/size unlimited jobs must be manually approved by an admin
       - This keeps people without permission from using large amounts of compute time
+      - Register and change login page
   - Execution
 - Data Staging Layer
   - Parsing descriptions of filesystems
