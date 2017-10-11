@@ -216,14 +216,55 @@ def authenticate():
     return render_template("autherr.html")
 
 
-@app.route('/register')
+@app.route('/register', methods=['GET', 'POST'])
 def register():
-    raise NotImplementedError
+    if request.method == 'GET':
+        return render_template("register.html")
+    uname = request.form['uname']
+    pw1 = request.form['passwd1']
+    pw2 = request.form['passwd2']
+    d_name = request.form['d_name']
+    u_id = str(uuid.uuid1())
+    if pw1 != pw2:
+        return "Passwords do not match."
+    if uname in app.config['db_cursor'].execute(
+            "select username from users").fetchone():
+        return "Username Taken. Choose another one."
+    app.config['db_cursor'].execute("""insert into users (
+    username, user_uuid, jobs_executed, display_name, passwd
+    ) values (?,?,?,?,?)""", (uname, u_id, 0, d_name,
+                              str(hashlib.sha224(
+                                  pw1.encode("utf-8")).hexdigest())))
+    app.config['db_conn'].commit()
+    session['username'] = uname
+    session['uuid'] = u_id
+    session['display_name'] = d_name
+    return "pass"
 
 
-@app.route('/changepass')
+@app.route('/changepass', methods=['POST', "GET"])
+@requires_auth
 def change_password():
-    raise NotImplementedError
+    if request.method == 'GET':
+        return render_template("change_pass.html")
+    uname = request.form.get("uname")
+    old_pass = hashlib.sha224(request.form.get(
+        "old_passwd").encode('utf-8')).hexdigest()
+    new_pass = hashlib.sha224(request.form.get(
+        "passwd").encode('utf-8')).hexdigest()
+    if uname != session['username']:
+        return "fail"
+    old_hash = app.config['db_cursor'].execute(
+        "select * from users where user_uuid=?",
+        (session['uuid'],)
+    ).fetchone()[4]
+    if old_pass != old_hash:
+        return "fail"
+    app.config['db_cursor'].execute(
+        "update users set passwd=? where user_uuid=?",
+        (new_pass, session['uuid']))
+    app.config['db_conn'].commit()
+    return "pass"
 
 
 @app.route('/docs')
@@ -233,10 +274,10 @@ def docs():
 
 @app.route('/contact', methods=['GET', 'POST'])
 def contact():
-    if request.methods == "GET":
+    if request.method == "GET":
         # We render the modal
         pass
-    elif request.methods == "POST":
+    elif request.method == "POST":
         # we handle the contact form and send an email
         pass
     else:
