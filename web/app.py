@@ -1,13 +1,12 @@
 from flask import Flask, render_template, request, redirect, session, url_for
 import time
-from werkzeug import secure_filename
-from functools import wraps
-import os
-import glob
 import uuid
-import json
 import sqlite3
 import hashlib
+# from database_helpers import None
+from security_helpers import sanitize_for_filename, requires_auth
+from exec_helpers import parse_filesystem, make_job_base_dir
+
 
 app = Flask(__name__)
 
@@ -17,15 +16,6 @@ app.config["admin_email"] = "glick@lclark.edu"
 app.config['upload_base_dir'] = "/Users/ben/Google Drive/class/y2/ind_study/workspace/uploads/"
 app.secret_key = b'\x9b4\xf8%\x1b\x90\x0e[?\xbd\x14\x7fS\x1c\xe7Y\xd8\x1c\xf9\xda\xb0K=\xba'
 # I will obviously change this secret key before we go live
-
-
-def requires_auth(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        if not check_auth(session.get('username', None)):
-            return authenticate()
-        return f(*args, **kwargs)
-    return decorated
 
 
 @app.route('/')
@@ -83,12 +73,12 @@ def authcallback():
 @app.route('/howto')
 @app.route('/help')
 def help():
-    raise NotImplementedError
+    return "Help you?! We can't even help ourselves!"
 
 
 @app.route('/about')
 def about():
-    raise NotImplementedError
+    return "No About Yet. Come Back Later."
 
 
 @app.route('/myjobs')
@@ -120,13 +110,6 @@ def all_jobs():
 def submit_page():
     print(session)
     return render_template('submit.html')
-
-
-def sanitize_for_filename(filename):
-    keepcharacters = [' ', '.', '_']
-    safe = "".join(c for c in filename if c.isalnum()
-                   or c in keepcharacters).rstrip()
-    return safe.replace(" ", "_")
 
 
 def db_save_job(jn, fn, cli, u_uuid, desc, b_dir):
@@ -169,51 +152,6 @@ def script_handler():
                 jn + "/filestructure.json")
         parse_filesystem(jn)
     return redirect('/newjob')
-
-
-def make_job_base_dir(filename, jobname, script):
-    if not os.path.exists(app.config['upload_base_dir'] + jobname):
-        os.makedirs(app.config['upload_base_dir'] +
-                    sanitize_for_filename(jobname))
-    else:
-        full_job_name_list = (
-            app.config['upload_base_dir'] + jobname).split("_")[:-1]
-        full_job_name = '_'.join(full_job_name_list) + "*"
-        numruns = str(len(glob.glob(full_job_name)) + 1)
-        print(numruns)
-        jobname = jobname + "_" + numruns
-        os.makedirs(app.config['upload_base_dir'] +
-                    sanitize_for_filename(jobname))
-    script.save(app.config['upload_base_dir'] + jobname + "/" + filename)
-    return jobname, app.config['upload_base_dir'] + sanitize_for_filename(jobname)
-
-
-def parse_filesystem(jobname):
-    fs_desc = []
-    dirpath = app.config["upload_base_dir"] + jobname + "/"
-    try:
-        fs_desc = json.load(open((dirpath + "filestructure.json", "r")))
-    except Exception as e:
-        app.logger.info("No FS_desc provided for job {}".format(jobname))
-    for object in fs_desc:
-        pass
-
-
-def check_auth(username):
-    """This function is called to check if a username /
-    password combination is valid.
-    """
-    print(username)
-    record = app.config['db_cursor'].execute(
-        "select * from users where username=?", (username,)).fetchone()
-    if not record:
-        return False
-    return username == record[0]
-
-
-def authenticate():
-    """Sends a 401 response that enables basic auth"""
-    return render_template("autherr.html")
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -269,7 +207,7 @@ def change_password():
 
 @app.route('/docs')
 def docs():
-    raise NotImplementedError
+    return "No Docs Yet. Come Back Later."
 
 
 @app.route('/contact', methods=['GET', 'POST'])

@@ -1,0 +1,226 @@
+
+\documentclass[10pt]{article} % Default font size
+
+\input{structure.tex} % Include the file specifying document layout
+
+
+\begin{document}
+
+%----------------------------------------------------------------------------------------
+%	NAME AND CONTACT INFORMATION
+%----------------------------------------------------------------------------------------
+
+\title{Benjamin H Glick} % Print the main header
+
+%------------------------------------------------
+
+\parbox{0.5\textwidth}{ % First block
+\begin{tabbing} % Enables tabbing
+\hspace{3cm} \= \hspace{4cm} \= \kill % Spacing within the block
+{\bf Address} \> 415 W Aldine Ave, Apt 10A\\ % Address line 1
+\>Chicago Il,60657  \\ % Address line 2
+{\bf Date of Birth} \> 4$^{th}$ April 1998 \\ % Date of birth 
+{\bf Nationality} \> American % Nationality
+\end{tabbing}}
+\hfill % Horizontal space between the two blocks
+\parbox{0.5\textwidth}{ % Second block
+\begin{tabbing} % Enables tabbing
+\hspace{3cm} \= \hspace{4cm} \= \kill % Spacing within the block
+%{\bf Home Phone} \> +1 (773) 975 8207 \\ % Home phone
+{\bf Mobile Phone} \> +1 (312) 391 0727 \\ % Mobile phone
+{\bf Email} \> \href{mailto:glick@lclark.edu}{glick@lclark.edu} \\ % Email address
+{\bf Github} \> \href{https://github.com/benhg}{@benhg} \\ % Email address
+\end{tabbing}}
+
+%----------------------------------------------------------------------------------------
+%	Goals
+%----------------------------------------------------------------------------------------
+
+\section{Goals}
+
+{To be a team cheerleader and tactician, to use my subject knowledge technical skills and interpersonal skills to take part in valuable projects.}
+
+%---------------------------------------------------------------------------------------
+%Strengths
+
+\section{Strengths/Skills}
+
+{Planning, problem solving, tactics, motivating or inspiring others, anchor of a team or group, ability to develop CS skills, speed at grasping new and complex concepts. Technical skills include python, c, c++, relational databases, javascript, html/css, java and \LaTeX/\TeX}
+
+%----------------------------------------------------------------------------------------
+%	EDUCATION SECTION
+%----------------------------------------------------------------------------------------
+
+\section{Education}
+
+\tabbedblock{
+\bf{2016-Present } \>  Student (BA, Physics \& Mathematics/Computer Science, Expected 2020) -\\\> \href{http://lclark.edu}{Lewis and Clark College (GPA: 3.726)} \\[5pt]
+\>\+
+\bf Relevant Coursework Includes \\
+\> $\bullet$Computer Networks and Web Development \\
+\> $\bullet$ Computer Architecture and Assembly Languages\\
+\> $\bullet$ Computer Graphics \\
+%\> $\bullet$ Physics Intro Sequence \\
+\> $\bullet$ Linear Algebra \\
+\> $\bullet$ Single-variable and Multi-variable Calculus \\
+\> $\bullet$ Independent Study in High Performance Compute Job Optimization\\
+\<
+\bf{2012-2016} \> Student (High School Diploma, 2016) - \href{http://ucls.uchicago.edu}{The University of Chicago Laboratory High School}\\[-20pt]
+}
+
+
+
+
+%----------------------------------------------------------------------------------------
+%	Experiences
+%----------------------------------------------------------------------------------------
+
+\section{Experience}
+\job
+{June 2017 -}{Present}
+{Swift Project, Argonne National Laboratory / Computation Institute, University of Chicago}
+{http://swift-lang.org}
+{Undergraduate Student Developer}
+{The Swift research group creates and maintains high-performance computing tools for scientific and data-intensive computing. With Swift, I develop, maintain, and manage tools to make data-intensive and computationally demanding tasks easy to use, secure, and scalable in a variety of computing environments from multicore computers to some of the largest supercomputers in the world.}
+
+
+\job
+{May 2017 -}{Aug. 2017}
+{Knowledge Lab, University of Chicago / IQSS/Harvard Business School}
+{http://knowledgelab.org}
+{Research Assistant}
+{I designed, deployed, and analyzed a survey to scientists which was used to help understand how and why authors cite particular works and whether their citations can be used as a measure of performance in sicence. The survey used proprietary data on millions of scientists and their publications/citations.}
+%\job
+%{Jan. 2017 -}{May 2017}
+%{Lewis \& Clark College}
+%{http://lc.edu}
+%{Stewart LLC Coordinator}
+%{Plan events relating to the Holistic Wellness living learning community located in Stewart Hall.}
+\job
+{June 2016 -}{Aug. 2016}
+{Globus/Computation Institute, University of Chicago}
+{http://globus.org}
+{Summer Intern}
+{Worked on a team to develop a resource for the globus group at the University of Chicago. Devoloped a product which allows scientists to securely search, share, process and access confidential scientific data stored in the globus cloud.}
+
+\job
+{June 2015 -}{Aug. 2015}
+{Computation Institute, University of Chicago}
+{http://www.ci.uchicago.edu}
+{RDCEP Summer Scholar}
+{Developed and applied skills in Mathematics and Computer Science. Member of a small team of high school interns on projects using large scale data.   Developed ability to build my own solutions using mathematical models.  Navigate and organize a team with different skills and motivation levels}
+
+%------------------------------------------------
+
+
+%\job
+%{June 2014 -}{July 2014}
+%{Beijing No.4 High School}
+%{http://www.bhsf.cn}
+%{Student}
+%{Studied Chinese Language and Culture at Beijing High School Four. Lived with a non English speaking host family, developed Chinese language and communication skills and learned about education and teenage life in China.  Immersed in a culture with few similarities to my own}
+
+%\job
+%{Aug. 2015 -}{June 2016}
+%{University of Chicago Laboratory High School}
+%{http://ucls.uchicago.edu}
+%{Member, Varsity Soccer Team}
+%{Joined team as a senior, learned how to be a valuable part of the team despite my soccer technical skills not being as good as others’. Developed tactics and helped to implement small tactical fixes.  Helped younger players adjust and gave  them someone to relate to.}
+
+%\job
+%{July 2009 -}{2011 2013}
+%{Sanborn Western Camps}
+%{http://www.sanbornwesterncamps.com}
+%{Camper, Big Spring Ranch for Boys}
+%{Learned to successfully live with little privacy around other people my age.  Learned camping and survival skills. Climbed mountains and learned leave no trace principles of camping.}
+
+\section{Publications, Awards, and Recognition}
+\award
+{Nov. 2017}
+{ }
+{IEEE and ACM SIGHPC}
+{https://sc17.supercomputing.org}
+{Forthcoming Publication}
+{Work relating to cloud computing infrastructure accepted to Student Research Compettition at \textit{The International Conference for High Performance Computing, Networking, Storage and Analysis (SC'17)}. \\ Benjamin Glick, Kyle Chard (Advisor), and Yadu Babuji (Advisor). 2017. Scalable Parallel Scripting in the Cloud. 2 pages.}
+%\award
+%{Sep. 2017-}
+%{Present}
+%{Python Software Foundation}
+%{https://python.org}
+%{Membership}
+%{Became a contributing member of the Python Software Foundation}
+\award
+{Sep. 2017}
+{ }
+{Lewis \& Clark College}
+{ }
+{Special Selection}
+{Selected to be a member of the Lewis \& Clark College Big Data Uses and Applications Group.}
+%\award
+%{Jun. 2017-}
+%{Present}
+%{The Association of Computing Machinery}
+%{https://acm.org}
+%{Membership}
+%{Became a member of the Association for Computing Machinery and ACM SIGHPC Special Interest Group in High-Performance Computing}
+%\award
+%{May. 2017-}
+%{Present}
+%{Institute of Electrical and Electronics Engineers}
+%{https://ieee.org}
+%{Membership}
+%{Became a member of the Institute of Electrical and Electronics Engineers (IEEE)}
+\award
+{May 2017}
+{ }
+{Lewis \& Clark College}
+{}
+{Award}
+{Dean's list, 2017 Spring.}
+
+\award
+{April 2017}
+{ }
+{National Cyber League}
+{}
+{Competition}
+{Placed 60th (out of 2000) in the 2017 Spring National Cyber League cybersecurity competition.}
+
+%\award
+%{April 2017}
+%{ }
+%{National Cyber League Team Competition}
+%{}
+%{Competition}
+%{Placed 38th in the 2017 Spring National Cyber League team cybersecurity competition.}
+
+\award
+{Feb. 2017}
+{ }
+{Pacific Rim Regional Cyber Defence Competition}
+{}
+{Competition}
+{Placed 3rd in the 2017 Pacific Rim Regional Cyber Defence Competition.}
+
+%----------------------------------------------------------------------------------------
+%	INTERESTS SECTION
+%----------------------------------------------------------------------------------------
+
+\section{Activities}
+\activity
+{Sep. 2004 -}{Present}
+{Brett Wolf Judo/Menomonee Judo Club}
+{http://brettwolfjudo.com}
+{Senpai/Judoka}
+{Competed at National Level, Taught beginner students, taught disabled students and military veterans. Learned leadership skills through mentoring and coaching younger teammates.  Learned to teach in an adaptive way from working around people’s various disabilities.  Develop ability to approach events in my life with a belief system that helps me have empathy and integrity.}
+
+\activity
+{Sep. 2015 -}{Jun. 2016}
+{University of Chicago Laboratory High School}
+{http://ucls.uchicago.edu}
+{Board Member, Computer Science Club}
+{Founding board memeber of the U-High computer science club (code@lab). Responsible for planning club activities and meetings, as well as engaging and recruiting members.}
+
+
+
+\end{document}
