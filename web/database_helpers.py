@@ -39,3 +39,27 @@ def get_my_jobs(uuid):
         from jobs
         join users on jobs.creator_uuid=users.user_uuid
         where users.user_uuid=?""", (uuid,)).fetchall()
+
+
+def get_user_record(uuid):
+    return app.app.config['db_cursor'].execute(
+        "select * from users where user_uuid=?",
+        (uuid,)
+    ).fetchone()
+
+
+def get_uname_record(uname):
+    return app.app.config['db_cursor'].execute(
+        "select * from users where username=?", (uname,)).fetchone()
+
+
+def get_all_users():
+    return app.app.config['db_cursor'].execute(
+        "select username from users").fetchone()
+
+
+def add_users(uname, u_id, num, d_name, passw):
+    app.app.config['db_cursor'].execute("""insert into users (
+    username, user_uuid, jobs_executed, display_name, passwd
+    ) values (?,?,?,?,?)""", (uname, u_id, num, d_name, passw))
+    app.app.config['db_conn'].commit()

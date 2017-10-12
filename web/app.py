@@ -1,10 +1,10 @@
 from flask import Flask, render_template, request, redirect, session, url_for
-import time
 import uuid
 import sqlite3
 import hashlib
-from database_helpers import db_save_job, increment_job_counter, get_all_jobs, get_my_jobs
-from security_helpers import sanitize_for_filename, requires_auth
+from database_helpers import db_save_job, increment_job_counter, get_all_jobs,\
+    get_my_jobs, get_user_record, get_uname_record, get_all_users, add_users
+from security_helpers import sanitize_for_filename, requires_auth, authenticate
 from exec_helpers import parse_filesystem, make_job_base_dir
 
 
@@ -45,11 +45,9 @@ def login():
 
 @app.route('/login_test', methods=["POST"])
 def login_test():
-    uname = request.form['uname']
+    uname = sanitize_for_filename(request.form['uname'])
     passwd = hashlib.sha224(request.form['passwd'].encode('utf-8')).hexdigest()
-    print(uname, passwd)
-    record = app.config['db_cursor'].execute(
-        "select * from users where username=?", (uname,)).fetchone()
+    record = get_uname_record(uname)
     if record:
         if passwd == record[4]:
             session['username'] = uname
@@ -85,12 +83,7 @@ def about():
 @requires_auth
 def all_jobs2():
     uname = session.get('display_name')
-    alljobs = app.config["db_cursor"].execute(
-        """select job_name, display_name, cli_invoc, time_created, status, size,
-        time_finished, desc
-        from jobs
-        join users on jobs.creator_uuid=users.user_uuid
-        where users.user_uuid=?""", (session.get('uuid'),)).fetchall()
+    alljobs = get_my_jobs(session.get("uuid"))
     return render_template("all_my_jobs.html", all_jobs=alljobs, u_name=uname)
 
 
@@ -135,22 +128,17 @@ def script_handler():
 def register():
     if request.method == 'GET':
         return render_template("register.html")
-    uname = request.form['uname']
-    pw1 = request.form['passwd1']
-    pw2 = request.form['passwd2']
+    uname = sanitize_for_filename(request.form['uname'])
+    pw1 = sanitize_for_filename(request.form['passwd1'])
+    pw2 = sanitize_for_filename(request.form['passwd2'])
     d_name = request.form['d_name']
     u_id = str(uuid.uuid1())
     if pw1 != pw2:
         return "Passwords do not match."
-    if uname in app.config['db_cursor'].execute(
-            "select username from users").fetchone():
+    if uname in get_all_users():
         return "Username Taken. Choose another one."
-    app.config['db_cursor'].execute("""insert into users (
-    username, user_uuid, jobs_executed, display_name, passwd
-    ) values (?,?,?,?,?)""", (uname, u_id, 0, d_name,
-                              str(hashlib.sha224(
-                                  pw1.encode("utf-8")).hexdigest())))
-    app.config['db_conn'].commit()
+    add_users(uname, u_id, 0, d_name, str(
+        hashlib.sha224(pw1.encode("utf-8")).hexdigest()))
     session['username'] = uname
     session['uuid'] = u_id
     session['display_name'] = d_name
@@ -169,10 +157,7 @@ def change_password():
         "passwd").encode('utf-8')).hexdigest()
     if uname != session['username']:
         return "fail"
-    old_hash = app.config['db_cursor'].execute(
-        "select * from users where user_uuid=?",
-        (session['uuid'],)
-    ).fetchone()[4]
+    old_hash = get_user_record(session.get('uuid'))[4]
     if old_pass != old_hash:
         return "fail"
     app.config['db_cursor'].execute(
@@ -197,4 +182,4 @@ def contact():
         pass
     else:
         # 405 method not allowed
-        return "405 Method Not Allowed"
+        return authenticate()
