@@ -2,6 +2,12 @@ from flask import Flask, render_template, request, redirect, session, url_for
 import uuid
 import sqlite3
 import hashlib
+import smtplib
+from email.mime.text import MIMEText
+import random
+import hashids
+import os
+
 from database_helpers import db_save_job, increment_job_counter, get_all_jobs,\
     get_my_jobs, get_user_record, get_uname_record, get_all_users, add_users, \
     single_update
@@ -16,6 +22,7 @@ app.config["db_cursor"] = app.config['db_conn'].cursor()
 app.config["admin_email"] = "glick@lclark.edu"
 app.config['upload_base_dir'] = "/Users/ben/Google Drive/class/y2/ind_study/workspace/uploads/"
 app.secret_key = b'\x9b4\xf8%\x1b\x90\x0e[?\xbd\x14\x7fS\x1c\xe7Y\xd8\x1c\xf9\xda\xb0K=\xba'
+app.config['hashids'] = hashids.Hashids()
 # I will obviously change this secret key before we go live
 
 
@@ -116,7 +123,7 @@ def submit_page():
 @app.route('/script', methods=["POST"])
 @requires_auth
 def script_handler():
-    """Handle script submission. Save incoming files, prepare filesystem, add 
+    """Handle script submission. Save incoming files, prepare filesystem, add
     to database"""
     jn = sanitize_for_filename(
         dict(request.form).get('job_name', ["job"])[0])
@@ -195,11 +202,20 @@ def docs():
 def contact():
     """Handle contact page and contact requests"""
     if request.method == "GET":
-        # We render the modal
-        pass
-    elif request.method == "POST":
-        # we handle the contact form and send an email
-        pass
-    else:
-        # 405 method not allowed
-        return "405 Method Not Allowed"
+        return render_template("contact.html")
+    name = request.form['uname']
+    from_email = request.form['email']
+    to_email = app.config['admin_email']
+    message = MIMEText(request.form['msg'])
+
+    message['From'] = from_email
+    message['To'] = to_email
+    message['Subject'] = "LC Cluster Interface Feedback Email [{}]".format(
+        app.config['hashids'].encode(
+            random.getrandbits(16)))
+    print(message)
+    s = smtplib.SMTP('aspmx.l.google.com')
+    s.sendmail(from_email, [to_email], "Name: {}".format(
+        name) + message.as_string())
+    s.quit()
+    return ""
