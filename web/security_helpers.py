@@ -5,6 +5,9 @@ from flask import render_template, session
 
 
 def sanitize_for_filename(filename):
+    """Sanitize a string to become a filename. Replaces spaces with
+    '_', keeps alphanumerics and '.'. Replaces illegal characters with '_'
+    :param filename input filename"""
     keepcharacters = [' ', '.', '_']
     safe = "".join(c for c in filename if c.isalnum()
                    or c in keepcharacters).rstrip()
@@ -14,6 +17,7 @@ def sanitize_for_filename(filename):
 def check_auth(username):
     """This function is called to check if a username /
     password combination is valid.
+    :param username
     """
     print(username)
     record = app.app.config['db_cursor'].execute(
@@ -29,6 +33,8 @@ def authenticate():
 
 
 def requires_auth(f):
+    """Decorator for authentication checking
+    :param f function to check"""
     @wraps(f)
     def decorated(*args, **kwargs):
         if not check_auth(session.get('username', None)):

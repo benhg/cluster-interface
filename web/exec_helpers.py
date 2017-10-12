@@ -7,6 +7,10 @@ from security_helpers import sanitize_for_filename
 
 
 def make_job_base_dir(filename, jobname, script):
+    """make base directory for job containing script/exe, filesystem description
+    and generated filename
+    :param filename name to save script as, :param jobname, name of job,
+    :param script werkzeug FileStorage object containing script/exe"""
     if not os.path.exists(app.app.config['upload_base_dir'] + jobname):
         os.makedirs(app.app.config['upload_base_dir'] +
                     sanitize_for_filename(jobname))
@@ -24,6 +28,8 @@ def make_job_base_dir(filename, jobname, script):
 
 
 def parse_filesystem(jobname):
+    """Parse JSON filesystem representation and create filesystem.
+    :param jobname name of job in question"""
     fs_desc = []
     dirpath = app.app.config["upload_base_dir"] + jobname + "/"
     try:
