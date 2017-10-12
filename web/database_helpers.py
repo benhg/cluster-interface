@@ -22,3 +22,20 @@ def increment_job_counter(user_id):
     app.app.config['db_cursor'].execute(
         "update users set jobs_executed=? where user_uuid=?", (current, user_id))
     app.app.config['db_conn'].commit()
+
+
+def get_all_jobs():
+    return app.app.config["db_cursor"].execute(
+        """select job_name, display_name, cli_invoc, time_created, status, size,
+        time_finished, desc
+        from jobs
+        join users on jobs.creator_uuid=users.user_uuid""").fetchall()
+
+
+def get_my_jobs(uuid):
+    return app.app.config["db_cursor"].execute(
+        """select job_name, display_name, cli_invoc, time_created, status, size,
+        time_finished, desc
+        from jobs
+        join users on jobs.creator_uuid=users.user_uuid
+        where users.user_uuid=?""", (uuid,)).fetchall()

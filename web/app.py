@@ -3,7 +3,7 @@ import time
 import uuid
 import sqlite3
 import hashlib
-from database_helpers import db_save_job, increment_job_counter
+from database_helpers import db_save_job, increment_job_counter, get_all_jobs, get_my_jobs
 from security_helpers import sanitize_for_filename, requires_auth
 from exec_helpers import parse_filesystem, make_job_base_dir
 
@@ -97,11 +97,7 @@ def all_jobs2():
 @app.route('/jobs')
 @requires_auth
 def all_jobs():
-    alljobs = app.config["db_cursor"].execute(
-        """select job_name, display_name, cli_invoc, time_created, status, size,
-        time_finished, desc
-        from jobs
-        join users on jobs.creator_uuid=users.user_uuid""").fetchall()
+    alljobs = get_all_jobs()
     return render_template("all_jobs.html", all_jobs=alljobs)
 
 
