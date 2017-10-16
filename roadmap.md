@@ -40,8 +40,8 @@ Brief To-do list/ short project roadmap
       - Requiring a manual override for some types of jobs
       - Small sandboxed jobs can be run without stewardship
       - Larger/size unlimited jobs must be manually approved by an admin
-      - This keeps people without permission from using large amounts of compute time
-      - Register and change login page
+      - This keeps people without permission from using large amounts of compute time 
+     - ~~Register and change login page~~
   - Execution
 - Data Staging Layer
   - Parsing descriptions of filesystems
@@ -51,6 +51,7 @@ Brief To-do list/ short project roadmap
     - From Internet
     - Over Globus (?)
   - Containerization layer
+    - Take parsed Filesystems and put them in the base of a docker container
   - Execution Layer
   
  
