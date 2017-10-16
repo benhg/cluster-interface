@@ -87,10 +87,9 @@ def add_users(uname, u_id, num, d_name, passw, email, salt):
     app.app.config['db_conn'].commit()
 
 
-def single_update(table_name, col_name, data_tuple):
-    """Update a single table, changing one column
-    :param """
+def update_pass(data_tuple):
+    """Update a password
+    :param data_tuple data to put in column (password, uuid)"""
     app.app.config['db_cursor'].execute(
-        "update ?  set ?=? where user_uuid=?",
-        (table_name, col_name) + data_tuple)
+        "update users set passwd=? where user_uuid=?", data_tuple)
     app.app.config['db_conn'].commit()

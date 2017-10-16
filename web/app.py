@@ -9,7 +9,7 @@ import hashids
 
 from database_helpers import db_save_job, increment_job_counter, get_all_jobs,\
     get_my_jobs, get_user_record, get_uname_record, get_all_users, add_users, \
-    single_update
+    update_pass
 from security_helpers import sanitize_for_filename, requires_auth
 from exec_helpers import parse_filesystem, make_job_base_dir
 
@@ -180,16 +180,19 @@ def change_password():
     if request.method == 'GET':
         return render_template("change_pass.html")
     uname = request.form.get("uname")
+    salt = get_uname_record(uname)[6]
+    print(salt.encode('utf-8'))
     old_pass = hashlib.sha224(request.form.get(
-        "old_passwd").encode('utf-8')).hexdigest()
+        "old_passwd").encode('utf-8') + salt.encode('utf-8')).hexdigest()
     new_pass = hashlib.sha224(request.form.get(
-        "passwd").encode('utf-8')).hexdigest()
+        "passwd").encode('utf-8') + salt.encode('utf-8')).hexdigest()
     if uname != session['username']:
         return "fail"
     old_hash = get_user_record(session.get('uuid'))[4]
     if old_pass != old_hash:
         return "fail"
-    single_update('users', 'passwd', (new_pass, session['uuid']))
+    print(new_pass, session['uuid'])
+    update_pass((new_pass, session['uuid']))
     return "pass"
 
 
