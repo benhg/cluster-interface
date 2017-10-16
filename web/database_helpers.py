@@ -76,18 +76,18 @@ def get_all_users():
     return [user[0] for user in users]
 
 
-def add_users(uname, u_id, num, d_name, passw, email):
+def add_users(uname, u_id, num, d_name, passw, email, salt):
     """Add user to the table users.
     :param uname usernam, :param u_id user uuid, :param num number of jobs,
     :param d_name display name, :param passw salted hash of password,
     :param email user's email address"""
     app.app.config['db_cursor'].execute("""insert into users (
-    username, user_uuid, jobs_executed, display_name, passwd, email
-    ) values (?,?,?,?,?,?)""", (uname, u_id, num, d_name, passw, email))
+    username, user_uuid, jobs_executed, display_name, passwd, email, salt
+    ) values (?,?,?,?,?,?,?)""", (uname, u_id, num, d_name, passw, email, salt))
     app.app.config['db_conn'].commit()
 
 
-def single_update(table_name, col_name,  data_tuple):
+def single_update(table_name, col_name, data_tuple):
     """Update a single table, changing one column
     :param """
     app.app.config['db_cursor'].execute(

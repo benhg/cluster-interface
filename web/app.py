@@ -6,12 +6,11 @@ import smtplib
 from email.mime.text import MIMEText
 import random
 import hashids
-import os
 
 from database_helpers import db_save_job, increment_job_counter, get_all_jobs,\
     get_my_jobs, get_user_record, get_uname_record, get_all_users, add_users, \
     single_update
-from security_helpers import sanitize_for_filename, requires_auth, authenticate
+from security_helpers import sanitize_for_filename, requires_auth
 from exec_helpers import parse_filesystem, make_job_base_dir
 
 
@@ -58,9 +57,10 @@ def login_test():
     """Check if login was successful or not. Takes a post request, returns
     'pass' or 'fail'"""
     uname = sanitize_for_filename(request.form['uname'])
-    passwd = hashlib.sha224(request.form['passwd'].encode('utf-8')).hexdigest()
     record = get_uname_record(uname)
     if record:
+        passwd = hashlib.sha224(request.form['passwd'].encode(
+            'utf-8') + record[6].encode('utf-8')).hexdigest()
         if passwd == record[4]:
             session['username'] = uname
             session["display_name"] = record[3]
@@ -162,8 +162,9 @@ def register():
         return "Passwords do not match."
     if uname in get_all_users():
         return "Username Taken. Choose another one."
+    salt = str(uuid.uuid4())
     add_users(uname, u_id, 0, d_name, str(
-        hashlib.sha224(pw1.encode("utf-8")).hexdigest()), email)
+        hashlib.sha224(pw1.encode("utf-8") + salt.encode('utf-8')).hexdigest()), email, salt)
     session['username'] = uname
     session['uuid'] = u_id
     session['display_name'] = d_name
