@@ -52,6 +52,9 @@ Brief To-do list/ short project roadmap
     - Over Globus (?)
   - Containerization layer
     - Take parsed Filesystems and put them in the base of a docker container
+    - Generate command to run docker container
+    - pass docker container and command to worker node to run
+    - extract result from container and pass back to GUI/CLI/whatever and email link to download
   - Execution Layer
   
  
