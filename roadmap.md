@@ -33,7 +33,7 @@ Brief To-do list/ short project roadmap
 - ~~Flask app to handle web backend~~
 - ~~Web frontend~~
 - System interaction layer
-  - File Structure
+  - ~~File Structure~~
   - ~~Security~~ (V. 1 is working. Moving away from security for a little while.)
     -Oauth (maybe globus auth is a good place to start?)
     - Possibly a place to test stewarship model?
@@ -44,7 +44,7 @@ Brief To-do list/ short project roadmap
      - ~~Register and change login page~~
   - Execution
 - Data Staging Layer
-  - Parsing descriptions of filesystems
+  - ~~Parsing descriptions of filesystems~~
   - and generating them
   - Staging input data
     - From head node
