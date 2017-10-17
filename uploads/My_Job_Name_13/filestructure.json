@@ -8,14 +8,14 @@
         "subdirs": {},
             "subfiles":[
           {
-              "name": "file1",
-	      "type": "wget",
-            "source": "https://www.google.com"
+            "name": "file1",
+            "type": "file",
+            "source": "wget https://www.google.com"
           },
           {
             "name": "file2",
-            "type": "wget",
-            "source": "https://www.google.com"
+            "type": "file",
+            "source": "wget https://www.google.com"
           }
             ]
       },

@@ -8,12 +8,14 @@
         "type": "dir",
         "subdirs": [],
         "subfiles": [
-          {
+            {
+		"base_command": "wget",
             "name": "file1",
             "type": "file",
             "source": "wget https://www.google.com"
           },
-          {
+            {
+	    "base_command": "wget",
             "name": "file2",
             "type": "file",
             "source": "wget https://www.google.com"

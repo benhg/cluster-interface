@@ -3,6 +3,7 @@ import os
 import json
 import glob
 import app
+from urllib.parse import urlparse
 from security_helpers import sanitize_for_filename
 from database_helpers import change_job_status
 
@@ -60,13 +61,21 @@ def parse_filesystem(jobname, postfix='', fs_desc=None):
         parse_filesystem(jobname, dir['name'], dir.get('subdirs'))
         if len(current_files) > 0:
             parse_files(current_files, dirpath + dir['name'])
-    change_job_status(jobname, "Pending(Unsched)")
+    change_job_status(jobname, "Pending (Unsched)")
     return jobname
 
 
 def parse_files(list_of_files, basedir):
     """Parse JSON filesystem description for flat files"""
     for file in list_of_files:
-        if not os.path.exists(basedir + file['name']):
-            os.system(r"touch {}".format(
-                os.path.abspath(basedir).replace(' ', r"\ ") + '/' + file['name']))
+        path = os.path.abspath(basedir).replace(
+            ' ', r"\ ") + '/' + file['name']
+        if not os.path.exists(path):
+            if file['type'] == 'wget':
+                os.system(
+                    r"wget {}  --output-document={}".format(urlparse(file['source']).geturl(), path))
+            elif file['type'] == 'cp':
+                os.system("cp {} {}".format(file['source'], path))
+            elif file['type'] == 'globus':
+                raise NotImplementedError
+            return True

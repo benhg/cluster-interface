@@ -130,7 +130,6 @@ def script_handler():
     fn = sanitize_for_filename(
         dict(request.form).get('filename', ['script'])[0])
     fs = dict(request.files).get("filestructure", [None])[0]
-    print(fs)
     script = dict(request.files).get("executable", [None])[0]
     desc = request.form.get("desc", [None])
     cli = request.form.get("cli", [None])
@@ -181,7 +180,6 @@ def change_password():
         return render_template("change_pass.html")
     uname = request.form.get("uname")
     salt = get_uname_record(uname)[6]
-    print(salt.encode('utf-8'))
     old_pass = hashlib.sha224(request.form.get(
         "old_passwd").encode('utf-8') + salt.encode('utf-8')).hexdigest()
     new_pass = hashlib.sha224(request.form.get(
@@ -191,7 +189,6 @@ def change_password():
     old_hash = get_user_record(session.get('uuid'))[4]
     if old_pass != old_hash:
         return "fail"
-    print(new_pass, session['uuid'])
     update_pass((new_pass, session['uuid']))
     return "pass"
 
@@ -211,13 +208,11 @@ def contact():
     from_email = request.form['email']
     to_email = app.config['admin_email']
     message = MIMEText(request.form['msg'])
-
     message['From'] = from_email
     message['To'] = to_email
     message['Subject'] = "LC Cluster Interface Feedback Email [{}]".format(
         app.config['hashids'].encode(
             random.getrandbits(16)))
-    print(message)
     s = smtplib.SMTP('aspmx.l.google.com')
     s.sendmail(from_email, [to_email], "Name: {}".format(
         name) + message.as_string())
