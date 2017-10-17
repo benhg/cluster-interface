@@ -4,6 +4,7 @@ import json
 import glob
 import app
 from security_helpers import sanitize_for_filename
+#from database_helpers import change_job_status
 
 
 def make_job_base_dir(filename, jobname, script):
@@ -28,14 +29,43 @@ def make_job_base_dir(filename, jobname, script):
         sanitize_for_filename(jobname)
 
 
-def parse_filesystem(jobname):
+def parse_filesystem(jobname, postfix='', fs_desc=None):
     """Parse JSON filesystem representation and create filesystem.
-    :param jobname name of job in question"""
-    fs_desc = []
-    dirpath = app.app.config["upload_base_dir"] + jobname + "/"
-    try:
-        fs_desc = json.load(open((dirpath + "filestructure.json", "r")))
-    except Exception as e:
-        app.app.logger.info("No FS_desc provided for job {}".format(jobname))
-    for object in fs_desc:
-        pass
+    :param jobname name of job in question
+    :param postfix addition to be made to file path
+    :param fs_desc JSON description of filesystem
+
+    Look, I know this sucks. I promise when I have better ideas, 
+    I will fix this function.
+    """
+    #change_job_status(jobname, "Staging Inputs")
+    dirpath = app.app.config["upload_base_dir"] + jobname + "/" + postfix
+    if type(fs_desc) != dict:
+        try:
+            fs_desc = json.load(open(dirpath + "filestructure.json", "r"))
+        except Exception as e:
+            app.app.logger.info(
+                "No FS_desc provided for job {}".format(jobname))
+            raise e
+    if fs_desc == {}:
+        return jobname
+    current_dirs = fs_desc.get("subdirs")
+    if not os.path.exists(dirpath + fs_desc['name']):
+        os.makedirs(dirpath + fs_desc['name'])
+    dirpath += fs_desc['name'] + "/"
+    for dir in current_dirs:
+        current_files = dir.get("subfiles")
+        if not os.path.exists(dirpath + dir['name']):
+            os.makedirs(dirpath + dir['name'])
+        parse_filesystem(jobname, dir['name'], dir.get('subdirs'))
+        if len(current_files) > 0:
+            parse_files(current_files, dirpath + dir['name'])
+    return jobname
+
+
+def parse_files(list_of_files, basedir):
+    print('hell0')
+    for file in list_of_files:
+        if not os.path.exists(basedir + file['name']):
+            os.system(r"touch {}".format(
+                os.path.abspath(basedir).replace(' ', r"\ ") + '/' + file['name']))

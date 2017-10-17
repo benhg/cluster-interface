@@ -86,7 +86,7 @@ def authcallback():
 @app.route('/help')
 def help():
     """Help Page"""
-    return "Help you?! We can't even help ourselves!"
+    return "Help you?! We can't even help ourselves!\n\n See the <a href='contact'>contact page</a> if you need help urgently"
 
 
 @app.route('/about')
