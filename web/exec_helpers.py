@@ -4,7 +4,7 @@ import json
 import glob
 import app
 from security_helpers import sanitize_for_filename
-#from database_helpers import change_job_status
+from database_helpers import change_job_status
 
 
 def make_job_base_dir(filename, jobname, script):
@@ -38,7 +38,7 @@ def parse_filesystem(jobname, postfix='', fs_desc=None):
     Look, I know this sucks. I promise when I have better ideas, 
     I will fix this function.
     """
-    #change_job_status(jobname, "Staging Inputs")
+    change_job_status(jobname, "Staging Inputs")
     dirpath = app.app.config["upload_base_dir"] + jobname + "/" + postfix
     if type(fs_desc) != dict:
         try:
@@ -60,11 +60,12 @@ def parse_filesystem(jobname, postfix='', fs_desc=None):
         parse_filesystem(jobname, dir['name'], dir.get('subdirs'))
         if len(current_files) > 0:
             parse_files(current_files, dirpath + dir['name'])
+    change_job_status(jobname, "Pending(Unsched)")
     return jobname
 
 
 def parse_files(list_of_files, basedir):
-    print('hell0')
+    """Parse JSON filesystem description for flat files"""
     for file in list_of_files:
         if not os.path.exists(basedir + file['name']):
             os.system(r"touch {}".format(

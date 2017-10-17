@@ -93,3 +93,10 @@ def update_pass(data_tuple):
     app.app.config['db_cursor'].execute(
         "update users set passwd=? where user_uuid=?", data_tuple)
     app.app.config['db_conn'].commit()
+
+
+def change_job_status(jobname, new_status):
+    """Change status of a job"""
+    app.app.config['db_cursor'].execute(
+        "update jobs set status=? where job_name=?", (new_status, jobname))
+    app.app.config['db_conn'].commit()
