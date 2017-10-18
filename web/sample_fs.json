@@ -1,34 +1,28 @@
-[
-  {
-    "name": "dir1",
-    "type": "dir",
-    "subdirs": [
-      {
-        "name": "dir2",
-        "type": "dir",
-        "subdirs": [],
-        "subfiles": [
-            {
-		"base_command": "wget",
-            "name": "file1",
-            "type": "file",
-            "source": "wget https://www.google.com"
-          },
-            {
-	    "base_command": "wget",
-            "name": "file2",
-            "type": "file",
-            "source": "wget https://www.google.com"
-          }
-        ]
-      },
-      {
-        "name": "dir3",
-        "type": "dir",
-        "subdirs": [],
-        "subfiles": []
-      }
-    ],
-    "subfiles": []
-  }
-]
+[{
+	"name": "dir1",
+	"type": "dir",
+	"subdirs": [{
+			"name": "dir2",
+			"type": "dir",
+			"subdirs": [],
+			"subfiles": [{
+					"name": "file1",
+					"type": "wget",
+					"source": "https://www.google.com"
+				},
+				{
+					"name": "file2",
+					"type": "wget",
+					"source": "https://www.google.com"
+				}
+			]
+		},
+		{
+			"name": "dir3",
+			"type": "dir",
+			"subdirs": [],
+			"subfiles": []
+		}
+	],
+	"subfiles": []
+}]

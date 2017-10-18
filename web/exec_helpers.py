@@ -36,7 +36,7 @@ def parse_filesystem(jobname, postfix='', fs_desc=None):
     :param postfix addition to be made to file path
     :param fs_desc JSON description of filesystem
 
-    Look, I know this sucks. I promise when I have better ideas, 
+    Look, I know this sucks. I promise when I have better ideas,
     I will fix this function.
     """
     change_job_status(jobname, "Staging Inputs")
@@ -78,4 +78,31 @@ def parse_files(list_of_files, basedir):
                 os.system("cp {} {}".format(file['source'], path))
             elif file['type'] == 'globus':
                 raise NotImplementedError
+            elif file['type'] == 'curl':
+                os.system(r"curl {} > {}".format(
+                    urlparse(file['source']).geturl(), path))
             return True
+
+
+def submit():
+    raise NotImplementedError
+
+
+def status():
+    raise NotImplementedError
+
+
+def cancel():
+    raise NotImplementedError
+
+
+def prepare_execution_environment():
+    raise NotImplementedError
+
+
+def stage_inputs():
+    raise NotImplementedError
+
+
+def dockerize():
+    raise NotImplementedError
