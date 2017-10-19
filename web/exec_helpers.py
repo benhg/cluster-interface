@@ -69,7 +69,7 @@ def parse_files(list_of_files, basedir):
     """Parse JSON filesystem description for flat files"""
     for file in list_of_files:
         path = os.path.abspath(basedir).replace(
-            ' ', r"\ ") + '/' + file['name']
+            ' ', r"\ ") + '/' + sanitize_for_filename(file['name'])
         if not os.path.exists(path):
             if file['type'] == 'wget':
                 os.system(
