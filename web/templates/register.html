@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block body %}
+<body>
+    <script src="static/js/register.js"></script>
+
+    <h1>Cluster Interface Registration</h1>
+
+    <form id="data" enctype="multipart/form-data" method="post">
+	<ul>
+	    <li>Choose Username <input type="text" name="uname" id="uname" value="My Username" /></li>
+	    <li>Where Can We Contact You? <input type="text" name="email" id="email" value="user@example.com" /></li>
+	    <li>Choose A Public Display Name <input type="text" name="d_name" id="d_name" value="My Name" /></li>
+	    <li>Choose A Password<input type="password" name="passwd1" id="passwd1" value="Password" /></li>
+	    <li>Confirm Your Password<input type="password" name="passwd2" id="passwd2" value="Password" /></li>
+	    <li><input id="submit-button" class="button green" type="button" name="submit" value="Submit Content"></li>
+	</ul>
+    </form>
+
+</body>
+{% endblock %}

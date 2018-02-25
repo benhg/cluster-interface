@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block body %}
+<head><link rel="stylesheet" href="static/css/table.css"></head>
+<body>
+    <h1>All Jobs:</h1><br />
+    <table>
+	<tr>
+	    <th>Jobname</th><th>Submitter</th> <th> Command Line Invocation</th> <th>Time Created</th><th>Status</th><th>Size</th><th>Time Finished</th><th>Description</th>
+	    {% for row_index in range(all_jobs|count) %}
+	    <tr>
+		<td>{{all_jobs[row_index][0]}}</td>
+		<td>{{all_jobs[row_index][1]}}</td>
+		<td>{{all_jobs[row_index][2]}}</td>
+		<td>{{all_jobs[row_index][3]}}</td>
+		<td>{{all_jobs[row_index][4]}}</td>
+		<td>{{all_jobs[row_index][5]}}</td>
+		<td>{{all_jobs[row_index][6]}}</td>
+		<td>{{all_jobs[row_index][7]}}</td>
+	    </tr>
+	    {% endfor %}
+	</tr>
+	
+    </table>
+</body>
+{% endblock %}
