@@ -1,0 +1,23 @@
+{
+        "site": "LC_Cluster",
+        "auth": {
+            "channel": "local"
+        },
+        "execution": {
+            "executor": "ipp",
+            "provider": "sge",
+            "script_dir": "/var/www/cluster-interface/.scripts",
+            "scriptDir": "/var/www/cluster-interface/.scripts",
+            "block": {
+                "nodes": 1,
+                "taskBlocks": 1,
+                "walltime": "00:05:00",
+                "initBlocks": 1,
+                "minBlocks": 0,
+                "maxBlocks": 10,
+                "options": {
+                    "partition": "debug"
+                }
+            }
+        }
+}

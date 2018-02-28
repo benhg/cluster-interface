@@ -36,6 +36,7 @@
 	     background-color: #4CAF50;
 	 }
 	</style>
+	<link rel="icon" type="image/png" href="static/img/blt_logo.png">
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
@@ -53,12 +54,10 @@
 	    <li><a href="docs">Docs</a></li>
 	    <li><a href="https://github.com/benhg/cluster-interface">Source Code</a></li>
 	    {% if not session.get("username", None) %}
-	    <li style="float:right"><a href="register">Register</a></li>
 	    <li style="float:right"><a href="login">Log In</a></li>
 	    {% else %}
 	    <li style="float:right"><a href="logout">Log Out {{session['display_name']}}</a></li>
-	    <li style="float:right"><a href="changepass">Change Password</a></li>
-	   {% endif %}
+	    {% endif %}
 	</ul>
 	{% block body %}{% endblock %}
     </body>

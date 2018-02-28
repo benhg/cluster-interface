@@ -25,7 +25,8 @@ def make_job_base_dir(filename, jobname, script):
         jobname = jobname + "_" + numruns
         os.makedirs(app.app.config['upload_base_dir'] +
                     sanitize_for_filename(jobname))
-    script.save(app.app.config['upload_base_dir'] + jobname + "/" + filename)
+    if script:
+        script.save(app.app.config['upload_base_dir'] + jobname + "/" + filename)
     return jobname, app.app.config['upload_base_dir'] + \
         sanitize_for_filename(jobname)
 

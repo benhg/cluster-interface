@@ -6,20 +6,23 @@ import smtplib
 from email.mime.text import MIMEText
 import random
 import hashids
-
+from libsubmit import GridEngine
 from database_helpers import db_save_job, increment_job_counter, get_all_jobs,\
     get_my_jobs, get_user_record, get_uname_record, get_all_users, add_users, \
     update_pass
 from security_helpers import sanitize_for_filename, requires_auth
 from exec_helpers import parse_filesystem, make_job_base_dir
-
-
+import os
+import json
+from simplepam import authenticate
 app = Flask(__name__)
+
+logfile = open('/var/www/cluster-interface/err.txt', 'w')
 
 app.config['db_conn'] = sqlite3.connect("/var/www/cluster-interface/interface.db", check_same_thread=False)
 app.config["db_cursor"] = app.config['db_conn'].cursor()
 app.config["admin_email"] = "glick@lclark.edu"
-app.config['upload_base_dir'] = "/Users/ben/Google Drive/class/y2/ind_study/workspace/uploads/"
+app.config['upload_base_dir'] = "/home/web_uploads/"
 app.secret_key = b'\x9b4\xf8%\x1b\x90\x0e[?\xbd\x14\x7fS\x1c\xe7Y\xd8\x1c\xf9\xda\xb0K=\xba'
 app.config['hashids'] = hashids.Hashids()
 # I will obviously change this secret key before we go live
@@ -56,17 +59,25 @@ def login():
 def login_test():
     """Check if login was successful or not. Takes a post request, returns
     'pass' or 'fail'"""
-    uname = sanitize_for_filename(request.form['uname'])
+    uname = request.form['uname']
+    passwd = request.form['passwd']
     record = get_uname_record(uname)
-    if record:
-        passwd = hashlib.sha224(request.form['passwd'].encode(
-            'utf-8') + record[6].encode('utf-8')).hexdigest()
-        if passwd == record[4]:
-            session['username'] = uname
-            session["display_name"] = record[3]
-            session['uuid'] = record[1]
-            session['email'] = record[5]
-            return "pass"
+    att = authenticate(str(uname), str(passwd), "login")
+    if att:
+        session['username'] = uname  
+        if record:
+            session["display_name"] = record[3]  
+            session['uuid'] = record[1]  
+            session['email'] = record[5]   
+        else:
+            # Create a database entry
+            u_id=str(uuid.uuid1())
+            email = '{}@lclark.edu'.format(uname)
+            add_users(uname, u_id, 0, uname, '', email, '')
+            session["display_name"] = uname
+            session['uuid'] = u_id
+            session['email'] = email
+        return "pass"
     return "fail"
 
 
@@ -134,17 +145,27 @@ def script_handler():
     desc = request.form.get("desc", [None])
     cli = request.form.get("cli", [None])
     jn, b_dir = make_job_base_dir(fn, jn, script)
-    db_save_job(jn, fn, cli,
-                session["uuid"], desc, b_dir)
     increment_job_counter(session.get('uuid'))
     if fs:
         fs.save(app.config["upload_base_dir"] +
                 jn + "/filestructure.json")
         parse_filesystem(jn)
-    return redirect('/newjob')
+    cmd_str = """
+PATH=/local/cluster/bin/:$PATH
+export PATH
+export LD_LIBRARY_PATH=/local/cluster/lib/:$LD_LIBRARY_PATH
+cd {}
+{}
+""".format(b_dir,cli)
+    provider = GridEngine(config=json.load(open("/var/www/cluster-interface/sge_config.json")))
+    j_id = provider.submit(cmd_string=cmd_str)
+    print(j_id)
+    db_save_job(jn, fn, cli,
+                session["uuid"], desc, b_dir, j_id)
+    return redirect('/webjobs/newjob')
 
 
-@app.route('/register', methods=['GET', 'POST'])
+#@app.route('/register', methods=['GET', 'POST'])
 def register():
     """Render registration page and also handle registratin requests.
     Returns an error string to be shown to the user by the frontend js
@@ -171,7 +192,7 @@ def register():
     return "pass"
 
 
-@app.route('/changepass', methods=['POST', "GET"])
+#@app.route('/changepass', methods=['POST', "GET"])
 @requires_auth
 def change_password():
     """Renders change password page, also handles requests

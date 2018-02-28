@@ -6,7 +6,7 @@ $('#submit-button').click(function(){
     console.log(formData);
 
     $.ajax({
-        url:'/contact',
+        url:'http://mayo.blt.lclark.edu/webjobs/contact',
         type: 'POST',
         data: formData,
         async: false,

@@ -6,7 +6,7 @@ $('#submit-button').click(function(){
     console.log(formData);
 
     $.ajax({
-        url:'/changepass',
+        url:'http://mayo.blt.lclark.edu/webjobs/changepass',
         type: 'POST',
         data: formData,
         async: false,
@@ -14,7 +14,7 @@ $('#submit-button').click(function(){
             if(data=="fail"){
 		$("h1").append("<h2 style='color:red'>Invalid Username or Password</h2>");
 	    }else{
-		window.location.replace('http://localhost:5000/newjob');
+		window.location.replace('http://mayo.blt.lclark.edu/webjobs/newjob');
 	    }
         },
         cache: false,

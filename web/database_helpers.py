@@ -5,12 +5,11 @@ import uuid
 import time
 
 
-def db_save_job(jn, fn, cli, u_uuid, desc, b_dir):
+def db_save_job(jn, fn, cli, u_uuid, desc, b_dir, job_uuid):
     """Save a job to the jobs database
     :param jn jobname, :param fn filename of executable, :param u_uid user uuid
     :param desc job description string, :param b_dir base directory of job.
     returns nothing, commits to database."""
-    job_uuid = str(uuid.uuid1())
     now = str(time.ctime())
     app.app.config['db_cursor'].execute("""insert into jobs (job_name, cli_invoc,
     time_created, j_id, creator_uuid, status, base_dir,
@@ -36,7 +35,7 @@ def get_all_jobs():
     returns 2d tuple of results"""
     return app.app.config["db_cursor"].execute(
         """select job_name, display_name, cli_invoc, time_created, status, size,
-        time_finished, desc
+        time_finished, desc, j_id
         from jobs
         join users on jobs.creator_uuid=users.user_uuid""").fetchall()
 
@@ -46,7 +45,7 @@ def get_my_jobs(uuid):
     returns 2d tuple of results"""
     return app.app.config["db_cursor"].execute(
         """select job_name, display_name, cli_invoc, time_created, status, size,
-        time_finished, desc
+        time_finished, desc, j_id
         from jobs
         join users on jobs.creator_uuid=users.user_uuid
         where users.user_uuid=?""", (uuid,)).fetchall()

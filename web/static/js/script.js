@@ -6,7 +6,7 @@ $('#submit-button').click(function(){
     console.log(fileData);
 
     $.ajax({
-        url:'/script',
+        url:'http://mayo.blt.lclark.edu/webjobs/script',
         type: 'POST',
         data: fileData,
         async: false,
