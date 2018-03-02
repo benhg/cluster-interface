@@ -9,15 +9,15 @@ import hashids
 from libsubmit import GridEngine
 from database_helpers import db_save_job, increment_job_counter, get_all_jobs,\
     get_my_jobs, get_user_record, get_uname_record, get_all_users, add_users, \
-    update_pass
+    update_pass, change_job_status
 from security_helpers import sanitize_for_filename, requires_auth
 from exec_helpers import parse_filesystem, make_job_base_dir
 import os
 import json
+import pwd
 from simplepam import authenticate
 app = Flask(__name__)
 
-logfile = open('/var/www/cluster-interface/err.txt', 'w')
 
 app.config['db_conn'] = sqlite3.connect("/var/www/cluster-interface/interface.db", check_same_thread=False)
 app.config["db_cursor"] = app.config['db_conn'].cursor()
@@ -68,7 +68,7 @@ def login_test():
         if record:
             session["display_name"] = record[3]  
             session['uuid'] = record[1]  
-            session['email'] = record[5]   
+            session['email'] = record[5]
         else:
             # Create a database entry
             u_id=str(uuid.uuid1())
@@ -77,7 +77,7 @@ def login_test():
             session["display_name"] = uname
             session['uuid'] = u_id
             session['email'] = email
-        return "pass"
+            return "pass"
     return "fail"
 
 
@@ -119,7 +119,14 @@ def all_jobs2():
 @requires_auth
 def all_jobs():
     """Render all jobs page"""
-    alljobs = get_all_jobs()
+    alljobs = [list(job) for job in get_all_jobs()]
+    for job in alljobs:
+        current_status = job[4]
+        if current_status != 'COMPLETED':
+            j_id = job[8]
+            new_status = status(str(j_id))
+            job[4] = new_status[0]
+            change_job_status(new_status[0], str(job[0]))
     return render_template("all_jobs.html", all_jobs=alljobs)
 
 
@@ -136,6 +143,7 @@ def submit_page():
 def script_handler():
     """Handle script submission. Save incoming files, prepare filesystem, add
     to database"""
+    app.config['upload_base_dir'] = pwd.getpwnam(session['username'])[5]+'/'
     jn = sanitize_for_filename(
         dict(request.form).get('job_name', ["job"])[0])
     fn = sanitize_for_filename(
@@ -150,19 +158,12 @@ def script_handler():
         fs.save(app.config["upload_base_dir"] +
                 jn + "/filestructure.json")
         parse_filesystem(jn)
-    cmd_str = """
-PATH=/local/cluster/bin/:$PATH
-export PATH
-export LD_LIBRARY_PATH=/local/cluster/lib/:$LD_LIBRARY_PATH
-cd {}
-{}
-""".format(b_dir,cli)
-    provider = GridEngine(config=json.load(open("/var/www/cluster-interface/sge_config.json")))
-    j_id = provider.submit(cmd_string=cmd_str)
-    print(j_id)
+    
+    os.popen('sudo chmod 777 -R {}'.format(b_dir))
+    j_id = os.popen("sudo sudo -u glick SGE_ROOT=/local/cluster/sge PATH=/local/cluster/bin/:/local/cluster/sge/bin/lx-amd64/:$PATH /local/cluster/bin/python3 /var/www/cluster-interface/run_job_as_user.py '{}' '{}' '{}'".format(session['username'], b_dir, cli)).read()
     db_save_job(jn, fn, cli,
                 session["uuid"], desc, b_dir, j_id)
-    return redirect('/webjobs/newjob')
+    return 'Your Job Has Been Submitted! Its Job ID is {}'.format(j_id)
 
 
 #@app.route('/register', methods=['GET', 'POST'])
@@ -239,3 +240,12 @@ def contact():
         name) + message.as_string())
     s.quit()
     return ""
+
+def status(j_id):
+    try:
+        j_id = str(int(j_id))
+    except Exception as e:
+        return ['COMPLETED']
+    sge = GridEngine(config=json.load(open('/var/www/cluster-interface/sge_config.json')))
+    status = sge.status([j_id])
+    return status

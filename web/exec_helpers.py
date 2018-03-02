@@ -6,16 +6,20 @@ import app
 from urllib.parse import urlparse
 from security_helpers import sanitize_for_filename
 from database_helpers import change_job_status
-
+import time
 
 def make_job_base_dir(filename, jobname, script):
     """make base directory for job containing script/exe, filesystem description
     and generated filename
     :param filename name to save script as, :param jobname, name of job,
     :param script werkzeug FileStorage object containing script/exe"""
+
+    os.popen("sudo chmod 777 -R /var/www/cluster-interface/.scripts")
     if not os.path.exists(app.app.config['upload_base_dir'] + jobname):
-        os.makedirs(app.app.config['upload_base_dir'] +
-                    sanitize_for_filename(jobname))
+        os.popen("sudo mkdir {}".format(app.app.config['upload_base_dir'] +
+                                        sanitize_for_filename(jobname)))
+        os.popen("sudo chmod 777 -R {}".format(app.app.config['upload_base_dir'] +
+                                        sanitize_for_filename(jobname)))
     else:
         full_job_name_list = (
             app.app.config['upload_base_dir'] + jobname).split("_")[:-1]
@@ -23,9 +27,13 @@ def make_job_base_dir(filename, jobname, script):
         numruns = str(len(glob.glob(full_job_name)) + 1)
         print(numruns)
         jobname = jobname + "_" + numruns
-        os.makedirs(app.app.config['upload_base_dir'] +
-                    sanitize_for_filename(jobname))
+        os.popen("sudo mkdir {}".format(app.app.config['upload_base_dir'] +
+                                        sanitize_for_filename(jobname))).read()
+        os.popen("sudo chmod 777 -R {}".format(app.app.config['upload_base_dir'] +
+                                        sanitize_for_filename(jobname))).read()
+
     if script:
+        
         script.save(app.app.config['upload_base_dir'] + jobname + "/" + filename)
     return jobname, app.app.config['upload_base_dir'] + \
         sanitize_for_filename(jobname)
