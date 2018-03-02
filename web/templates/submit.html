@@ -6,13 +6,14 @@
 
 	<form id="data" enctype="multipart/form-data" method="post">
 	    <ul>
-		<li>Job Name <input type="text" name="job_name" id="job_name" value="My Job Name" /></li>
-		<li>Executable File Name<input type="text" name="filename" id="file" value="Executable File Name" /></li>
-		<li>How Should We Run Your Program?<input type="text" name="cli" id="cli" value="Command Line Invocation" /></li>
-		<li>File Structure Description <input name="filestructure" type="file"/></li>
-		<li>Executable/Script<input name="executable" type="file" /></li>
-		<li>Job Description <textarea name="desc" id="desc" value="Job Description" cols="40" rows="5"></textarea></li>
-
+		<li>Job Name (Required)<input type="text" name="job_name" id="job_name" value="My Job Name" /></li>
+		<li>Executable File Name (Required if Executable Uploaded)<input type="text" name="filename" id="file" value="Executable File Name" /></li>
+		<li>How Should We Run Your Program? (Required, Pease DO NOT Use Single-Quotes)<input type="text" name="cli" id="cli" value="Command Line Invocation" /></li>
+		<li>File Structure Description (Optional)<input name="filestructure" type="file"/></li>
+		<li>Executable/Script (Optional)<input name="executable" type="file" /></li>
+		<li>Job Size (Required)<input name="size" type="text" value="Integer, 1-48"/></li>
+		<li>Job Description (Optional)<textarea name="desc" id="desc" value="Job Description" cols="40" rows="5"></textarea></li>
+		
 		<li><input id="submit-button" class="button green" type="button" name="submit" value="Submit Content"></li>
 	    </ul>
 	</form>

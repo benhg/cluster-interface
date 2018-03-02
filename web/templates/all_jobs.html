@@ -5,7 +5,7 @@
     <h1>All Jobs:</h1><br />
     <table>
 	<tr>
-	    <th>Job ID</th><th>Jobname</th><th>Submitter</th> <th> Command Line Invocation</th> <th>Time Created</th><th>Status</th><th>Size</th><th>Time Finished</th><th>Description</th>
+	    <th>Job ID</th><th>Job Name</th><th>Submitter</th> <th> Command Line Invocation</th> <th>Time Created</th><th>Status</th><th>Size</th><th>Time Finished</th><th>Description</th>
 	    {% for row_index in range(all_jobs|count) %}
 	<tr>
 	        <td>{{all_jobs[row_index][8]}}</td>

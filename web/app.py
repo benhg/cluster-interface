@@ -112,6 +112,14 @@ def all_jobs2():
     """Render user jobs page."""
     uname = session.get('display_name')
     alljobs = get_my_jobs(session.get("uuid"))
+    alljobs = [list(job) for job in get_all_jobs()]
+    for job in alljobs:
+        current_status = job[4]
+        if current_status != 'COMPLETED':
+            j_id = job[8]
+            new_status = status(str(j_id))
+            job[4] = new_status[0]
+            change_job_status(new_status[0], str(job[0]))
     return render_template("all_my_jobs.html", all_jobs=alljobs, u_name=uname)
 
 
@@ -150,6 +158,7 @@ def script_handler():
         dict(request.form).get('filename', ['script'])[0])
     fs = dict(request.files).get("filestructure", [None])[0]
     script = dict(request.files).get("executable", [None])[0]
+    size = int(dict(request.form).get("size", [1])[0])
     desc = request.form.get("desc", [None])
     cli = request.form.get("cli", [None])
     jn, b_dir = make_job_base_dir(fn, jn, script)
@@ -160,7 +169,7 @@ def script_handler():
         parse_filesystem(jn)
     
     os.popen('sudo chmod 777 -R {}'.format(b_dir))
-    j_id = os.popen("sudo sudo -u glick SGE_ROOT=/local/cluster/sge PATH=/local/cluster/bin/:/local/cluster/sge/bin/lx-amd64/:$PATH /local/cluster/bin/python3 /var/www/cluster-interface/run_job_as_user.py '{}' '{}' '{}'".format(session['username'], b_dir, cli)).read()
+    j_id = os.popen("sudo sudo -u glick SGE_ROOT=/local/cluster/sge PATH=/local/cluster/bin/:/local/cluster/sge/bin/lx-amd64/:$PATH /local/cluster/bin/python3 /var/www/cluster-interface/run_job_as_user.py '{}' '{}' '{}' '{}'".format(session['username'], b_dir, cli, size)).read()
     db_save_job(jn, fn, cli,
                 session["uuid"], desc, b_dir, j_id)
     return 'Your Job Has Been Submitted! Its Job ID is {}'.format(j_id)
