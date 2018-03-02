@@ -1,23 +1,27 @@
+
+## Brief To-do list/ short project roadmap
+
+
 Brief To-do list/ short project roadmap
 (Things that are struck through are done, not removed)
 
 **FRONT END/USER INTERACTION**
-- Python API/interface
+- ~~Python API/interface~~
 - CL tools
 - ~~Web-based GUI~~
 - to interact with:
 
 **BACK END**
-- Submit, status, cancel of tasks
-- Interact with scheduler
+- ~~Submit, status, cancel of tasks~~
+- ~~Interact with scheduler~~
 - Ideally, the following process occurs for each submit
-  - User submits job
+  - ~~User submits job~~
   - Job is containerized
   - ~~Inputs are staged~~
-  - Job is submitted to cluster scheduler
-  - Job executes/fails
-  - User is notified
-  - Outputs are staged and made available
+  - ~~Job is submitted to cluster scheduler~~
+  - ~~Job executes/fails~~
+  - ~~User is notified~~
+  -~~Outputs are staged and made available~~~
 - ~~Database to track metadata on jobs~~
  
 **USER INPUTS**
@@ -34,7 +38,8 @@ Brief To-do list/ short project roadmap
 - ~~Web frontend~~
 - System interaction layer
   - ~~File Structure~~
-  - ~~Security~~ (V. 1 is working. Moving away from security for a little while.)
+  - ~~Security~~ (V. 2 is working. Moving away from security for a little while.)
+    - Switched to PAM Auth (enforces that users have home dir, local env set up.)
     -Oauth (maybe globus auth is a good place to start?)
     - Possibly a place to test stewarship model?
       - Requiring a manual override for some types of jobs
@@ -55,6 +60,4 @@ Brief To-do list/ short project roadmap
     - Generate command to run docker container
     - pass docker container and command to worker node to run
     - extract result from container and pass back to GUI/CLI/whatever and email link to download
-  - Execution Layer
-  
- 
+  - ~~Execution Layer~~
